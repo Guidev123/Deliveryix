@@ -6,13 +6,11 @@ namespace Deliveryix.Commons.Infrastructure
 {
     public static class InfrastructureModule
     {
-        public const string SqlServerConnectionStringSectionName = "SqlServer";
-
-        public static IServiceCollection AddCommonInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCommonInfrastructure(this IServiceCollection services, string sqlServerConnectionSring)
         {
             services.AddSingleton<SqlConnectionFactory>(_ =>
             {
-                var connectionString = configuration.GetConnectionString(SqlServerConnectionStringSectionName)!;
+                var connectionString = sqlServerConnectionSring;
 
                 return new(connectionString);
             });
