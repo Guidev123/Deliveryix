@@ -10,6 +10,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.5" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Deliveryix.Commons.Application\Deliveryix.Commons.Application.csproj" />

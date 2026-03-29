@@ -31,37 +31,46 @@ public class ValidateIdentityBeforeCreationFunction
     {
         _logger.LogInformation("ValidateIdentityBeforeCreation triggered");
 
-        var body = await new StreamReader(req.Body).ReadToEndAsync(cancellationToken);
-
-        var request = JsonSerializer.Deserialize<EntraAttributeCollectionRequest>(body, JsonSerializerOptionsShared.GetDefault());
-
-        var attributes = request?.Data?.UserSignUpInfo?.Attributes;
-
-        if (attributes is null)
+        try
         {
-            _logger.LogWarning("Attributes are returning null");
-            return new OkObjectResult(Extensions.ResponseExtensions.Block("Unable to process your registration."));
+            var body = await new StreamReader(req.Body).ReadToEndAsync(cancellationToken);
+
+            var request = JsonSerializer.Deserialize<EntraAttributeCollectionRequest>(body, JsonSerializerOptionsShared.GetDefault());
+
+            var attributes = request?.Data?.UserSignUpInfo?.Attributes;
+
+            if (attributes is null)
+            {
+                _logger.LogWarning("Attributes are returning null");
+                return new OkObjectResult(Extensions.ResponseExtensions.Block("Unable to process your registration."));
+            }
+
+            var email = request?.Data?.UserSignUpInfo?.Identities?.FirstOrDefault()?.IssuerAssignedId;
+            var documentNumber = attributes.GetValueOrDefault($"extension_{_extensionAppId}_DocumentNumber")?.Value;
+            var phoneNumber = attributes.GetValueOrDefault($"extension_{_extensionAppId}_PhoneNumber")?.Value;
+
+            if (email is null || documentNumber is null || phoneNumber is null)
+            {
+                _logger.LogWarning("Required attributes missing");
+                return new OkObjectResult(Extensions.ResponseExtensions.Block("Unable to process your registration."));
+            }
+
+            var isUnique = await IsUniqueAsync(documentNumber, email, cancellationToken);
+
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("User with email {Email} is unique: {IsUnique}", email, isUnique);
+            }
+
+            return isUnique
+                ? Extensions.ResponseExtensions.Continue()
+                : Extensions.ResponseExtensions.Block("Unable to process your registration.");
         }
-
-        var email = request?.Data?.UserSignUpInfo?.Identities?.FirstOrDefault()?.IssuerAssignedId;
-        var documentNumber = attributes.GetValueOrDefault($"extension_{_extensionAppId}_DocumentNumber")?.Value;
-
-        if (email is null || documentNumber is null)
+        catch (Exception ex)
         {
-            _logger.LogWarning("Required attributes missing");
-            return new OkObjectResult(Extensions.ResponseExtensions.Block("Unable to process your registration."));
+            _logger.LogError(ex, "Failed to validate before creation");
+            return Extensions.ResponseExtensions.Block("Unable to process your registration.");
         }
-
-        var isUnique = await IsUniqueAsync(documentNumber, email, cancellationToken);
-
-        if (_logger.IsEnabled(LogLevel.Information))
-        {
-            _logger.LogInformation("User with email {Email} is unique: {IsUnique}", email, isUnique);
-        }
-
-        return isUnique
-            ? Extensions.ResponseExtensions.Continue()
-            : Extensions.ResponseExtensions.Block("An account with this email or document already exists.");
     }
 
     private async Task<bool> IsUniqueAsync(
