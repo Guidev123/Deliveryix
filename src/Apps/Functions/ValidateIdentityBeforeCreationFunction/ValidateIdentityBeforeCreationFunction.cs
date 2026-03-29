@@ -1,12 +1,14 @@
 using Dapper;
 using Deliveryix.Commons.Infrastructure.Factories;
+using Deliveryix.Commons.Infrastructure.Outbox.Models;
 using Deliveryix.Commons.Infrastructure.Serializer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
+using Modules.Identity.Domain.Identities.DomainEvents;
+using Newtonsoft.Json;
 using ValidateIdentityBeforeCreationFunction.Models;
 
 namespace ValidateIdentityBeforeCreationFunction;
@@ -35,7 +37,7 @@ public class ValidateIdentityBeforeCreationFunction
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync(cancellationToken);
 
-            var request = JsonSerializer.Deserialize<EntraAttributeCollectionRequest>(body, JsonSerializerOptionsShared.GetDefault());
+            var request = System.Text.Json.JsonSerializer.Deserialize<EntraAttributeCollectionRequest>(body, JsonSerializerOptionsExtensions.GetDefault());
 
             var attributes = request?.Data?.UserSignUpInfo?.Attributes;
 
@@ -62,9 +64,22 @@ public class ValidateIdentityBeforeCreationFunction
                 _logger.LogInformation("User with email {Email} is unique: {IsUnique}", email, isUnique);
             }
 
-            return isUnique
-                ? Extensions.ResponseExtensions.Continue()
-                : Extensions.ResponseExtensions.Block("Unable to process your registration.");
+            if (!isUnique)
+            {
+                return Extensions.ResponseExtensions.Block("Unable to process your registration.");
+            }
+
+            var domainEvent = new UserRegisteredInProviderDomainEvent(Guid.Empty, email, documentNumber, phoneNumber);
+
+            await InsertOutboxMessageAsync(new()
+            {
+                Id = domainEvent.CorrelationId,
+                Content = JsonConvert.SerializeObject(domainEvent, JsonSerializerSettingsExtensions.Instance),
+                Type = domainEvent.Messagetype,
+                OccurredOn = domainEvent.OccurredOn
+            }, cancellationToken);
+
+            return Extensions.ResponseExtensions.Continue();
         }
         catch (Exception ex)
         {
@@ -97,5 +112,25 @@ public class ValidateIdentityBeforeCreationFunction
             """";
 
         return await connection.ExecuteScalarAsync<bool>(sql, new { Document = document, Email = email }).WaitAsync(cancellationToken);
+    }
+
+    private async Task<int> InsertOutboxMessageAsync(OutboxMessage outboxMessage, CancellationToken cancellationToken)
+    {
+        using var connection = _sqlConnectionFactory.Create();
+
+        const string sql = """
+            INSERT INTO [identity].OutboxMessages
+            VALUES(@Id, @Type, @Content, @OccurredOn, @ProcessedOn, @Error)
+            """;
+
+        return await connection.ExecuteAsync(sql, new
+        {
+            outboxMessage.Id,
+            outboxMessage.Type,
+            outboxMessage.Content,
+            outboxMessage.OccurredOn,
+            outboxMessage.ProcessedOn,
+            outboxMessage.Error
+        }).WaitAsync(cancellationToken);
     }
 }

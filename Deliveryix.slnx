@@ -7,6 +7,9 @@
   <Folder Name="/src/Apps/Functions/">
     <Project Path="src/Apps/Functions/ValidateIdentityBeforeCreationFunction/ValidateIdentityBeforeCreationFunction.csproj" Id="1b6d086f-5fb8-4e01-89a5-424b455b085c" />
   </Folder>
+  <Folder Name="/src/Apps/Workers/">
+    <Project Path="src/Apps/Workers/Modules.Identity.OutboxWorker/Modules.Identity.OutboxWorker.csproj" Id="230c4bcb-cd59-4c46-8c0a-6e02cd0847ce" />
+  </Folder>
   <Folder Name="/src/BuildingBlocks/">
     <Project Path="src/BuildingBlocks/Deliveryix.Commons.Application/Deliveryix.Commons.Application.csproj" />
     <Project Path="src/BuildingBlocks/Deliveryix.Commons.Domain/Deliveryix.Commons.Domain.csproj" />

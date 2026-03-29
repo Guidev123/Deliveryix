@@ -2,7 +2,7 @@
 
 namespace Deliveryix.Commons.Infrastructure.Serializer
 {
-    public static class SerializerExtensions
+    public static class JsonSerializerSettingsExtensions
     {
         public static readonly JsonSerializerSettings Instance = new()
         {

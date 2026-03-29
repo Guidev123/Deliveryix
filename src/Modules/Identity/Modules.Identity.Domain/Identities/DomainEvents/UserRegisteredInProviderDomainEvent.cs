@@ -9,7 +9,6 @@ namespace Modules.Identity.Domain.Identities.DomainEvents
             CorrelationId = Guid.NewGuid();
             OccurredOn = DateTimeOffset.UtcNow;
             Messagetype = GetType().Name;
-            IdentityProviderId = aggregateId.ToString();
             AggregateId = aggregateId;
             Email = email;
             Document = document;
@@ -20,7 +19,6 @@ namespace Modules.Identity.Domain.Identities.DomainEvents
         public Guid CorrelationId { get; }
         public DateTimeOffset OccurredOn { get; }
         public string Messagetype { get; }
-        public string IdentityProviderId { get; }
         public string Email { get; }
         public string Document { get; }
         public string Phone { get; }
