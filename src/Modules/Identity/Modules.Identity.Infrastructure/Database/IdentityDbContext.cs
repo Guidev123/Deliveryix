@@ -11,7 +11,7 @@ namespace Modules.Identity.Infrastructure.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema(Schema.DefaultSchemaName);
+            modelBuilder.HasDefaultSchema(Schemas.DefaultSchemaName);
 
             modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
             modelBuilder.ApplyConfiguration(new OutboxMessageConsumerConfiguration());

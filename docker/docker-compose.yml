@@ -20,6 +20,23 @@ services:
     volumes:
       - deliveryix-redis_data:/data
 
+  deliveryix-servicebus:
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    container_name: servicebus-emulator
+    restart: always
+    depends_on:
+      - deliveryix-sqlserver
+    ports:
+      - "5672:5672" # AMQP
+      - "5300:5300" # Management API
+    environment:
+      SQL_SERVER: deliveryix-sqlserver
+      MSSQL_SA_PASSWORD: "StrongPassword@123"
+      ACCEPT_EULA: "Y"
+      EMULATOR_HTTP_PORT: 5300
+    volumes:
+      - ./servicebus-config.json:/ServiceBus_Emulator/ConfigFiles/Config.json
+
 volumes:
   deliveryix-sqlserver_data:
   deliveryix-redis_data:

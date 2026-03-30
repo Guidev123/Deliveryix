@@ -1,6 +1,6 @@
 ﻿namespace Modules.Identity.Infrastructure.Database
 {
-    internal sealed class Schema
+    public sealed class Schemas
     {
         public static string DefaultSchemaName = "identity";
     }

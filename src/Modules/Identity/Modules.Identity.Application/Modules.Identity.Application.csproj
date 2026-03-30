@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Deliveryix.Commons.Application\Deliveryix.Commons.Application.csproj" />
     <ProjectReference Include="..\Modules.Identity.Domain\Modules.Identity.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Identities\" />
   </ItemGroup>
 
 </Project>

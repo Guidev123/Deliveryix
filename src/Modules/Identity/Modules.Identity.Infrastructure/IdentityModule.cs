@@ -1,8 +1,14 @@
-﻿using Deliveryix.Commons.Infrastructure;
+﻿using Azure.Identity;
+using Deliveryix.Commons.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.Graph;
+using Modules.Identity.Application.Identities.Create;
+using Modules.Identity.Application.Identities.Options;
 using Modules.Identity.Infrastructure.Database;
+using Modules.Identity.Infrastructure.Services;
 
 namespace Modules.Identity.Infrastructure
 {
@@ -20,10 +26,31 @@ namespace Modules.Identity.Infrastructure
 
             services.AddCommonInfrastructure(sqlServerConnection, redisConnection);
 
+            services.AddServices(configuration);
+
             services.AddDbContext<IdentityDbContext>(options =>
             {
                 options.UseSqlServer(sqlServerConnection);
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<MicrosoftGraphOptions>(configuration.GetSection(MicrosoftGraphOptions.SectionName));
+
+            services.AddSingleton(sp =>
+            {
+                var options = sp.GetRequiredService<IOptions<MicrosoftGraphOptions>>();
+                var graphOptions = options.Value;
+
+                var credential = new ClientSecretCredential(graphOptions.TenantId, graphOptions.ClientId, graphOptions.ClientSecret);
+
+                return new GraphServiceClient(credential, scopes: [graphOptions.Scope]);
+            });
+
+            services.AddScoped<IMicrosoftGraphService, MicrosoftGraphService>();
 
             return services;
         }

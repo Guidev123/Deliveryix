@@ -1,7 +1,6 @@
 ﻿using Deliveryix.Commons.Application.Cache;
 using Deliveryix.Commons.Infrastructure.Cache;
 using Deliveryix.Commons.Infrastructure.Factories;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using StackExchange.Redis;
@@ -16,6 +15,7 @@ namespace Deliveryix.Commons.Infrastructure
             string redisConnectionString
             )
         {
+            services.AddSingleton(TimeProvider.System);
             services.AddData(sqlServerConnectionSring);
             services.AddCacheService(redisConnectionString);
 
