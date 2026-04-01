@@ -4,6 +4,7 @@ using Deliveryix.Commons.Domain.DomainObjects;
 using Deliveryix.Commons.Infrastructure.Serializer;
 using Microsoft.Extensions.Options;
 using MidR.Interfaces;
+using Modules.Identity.Domain.Identities.Extensions;
 using Modules.Identity.Infrastructure.Database;
 using Modules.Identity.OutboxWorker.Options;
 using Newtonsoft.Json;
@@ -49,7 +50,7 @@ namespace Modules.Identity.OutboxWorker
 
             var outboxMessages = await outboxRepository.GetAsync(
                 _outboxOptions.BatchSize,
-                Schemas.DefaultSchemaName,
+                ModuleExtensions.ModuleName,
                 stoppingToken);
 
             foreach (var outboxMessage in outboxMessages)
@@ -74,7 +75,7 @@ namespace Modules.Identity.OutboxWorker
                 }
 
                 await outboxRepository.UpdateAsync(
-                    Schemas.DefaultSchemaName,
+                    ModuleExtensions.ModuleName,
                     exception,
                     outboxMessage,
                     stoppingToken);

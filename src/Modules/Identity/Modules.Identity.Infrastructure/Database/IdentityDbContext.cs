@@ -3,6 +3,7 @@ using Deliveryix.Commons.Infrastructure.Inbox.Configurations;
 using Deliveryix.Commons.Infrastructure.Outbox.Configurations;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using ModuleExtensions = Modules.Identity.Domain.Identities.Extensions.ModuleExtensions;
 
 namespace Modules.Identity.Infrastructure.Database
 {
@@ -12,7 +13,7 @@ namespace Modules.Identity.Infrastructure.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema(Schemas.DefaultSchemaName);
+            modelBuilder.HasDefaultSchema(ModuleExtensions.ModuleName);
 
             modelBuilder.Ignore<DomainEvent>();
 

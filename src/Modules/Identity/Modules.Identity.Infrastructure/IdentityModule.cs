@@ -16,7 +16,6 @@ using Modules.Identity.Application.Identities.Options;
 using Modules.Identity.Application.Identities.Repositories;
 using Modules.Identity.Infrastructure.Database;
 using Modules.Identity.Infrastructure.Database.Repositories;
-using Modules.Identity.Infrastructure.Outbox;
 using Modules.Identity.Infrastructure.Services;
 
 namespace Modules.Identity.Infrastructure

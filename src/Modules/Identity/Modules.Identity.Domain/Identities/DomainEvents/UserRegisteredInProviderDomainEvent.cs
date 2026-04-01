@@ -1,4 +1,5 @@
 ﻿using Deliveryix.Commons.Domain.DomainObjects;
+using Modules.Identity.Domain.Identities.Extensions;
 
 namespace Modules.Identity.Domain.Identities.DomainEvents
 {
@@ -13,7 +14,7 @@ namespace Modules.Identity.Domain.Identities.DomainEvents
 
         private UserRegisteredInProviderDomainEvent(
             Guid aggregateId, string email, string document, string phone)
-            : base(aggregateId, nameof(UserRegisteredInProviderDomainEvent))
+            : base(aggregateId, nameof(UserRegisteredInProviderDomainEvent), ModuleExtensions.ModuleName)
         {
             Email = email;
             Document = document;

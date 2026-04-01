@@ -2,9 +2,8 @@
 using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Domain.DomainObjects;
 using MidR.Behaviors;
-using Modules.Identity.Infrastructure.Database;
 
-namespace Modules.Identity.Infrastructure.Outbox
+namespace Deliveryix.Commons.Application.Behaviors
 {
     public sealed class OutboxIdempotencyBehavior<TNotification>(
             IOutboxRepository outboxRepository
@@ -16,7 +15,7 @@ namespace Modules.Identity.Infrastructure.Outbox
         {
             var outboxMessageConsumer = new OutboxMessageConsumer(notification.CorrelationId, notification.Messagetype);
 
-            var schema = Schemas.DefaultSchemaName;
+            var schema = notification.Module;
 
             var isProcessed = await outboxRepository.IsProcessedAsync(outboxMessageConsumer, schema, cancellationToken);
             if (isProcessed)

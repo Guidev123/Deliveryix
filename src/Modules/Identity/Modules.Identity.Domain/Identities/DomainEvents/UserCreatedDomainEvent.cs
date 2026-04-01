@@ -1,4 +1,5 @@
 ﻿using Deliveryix.Commons.Domain.DomainObjects;
+using Modules.Identity.Domain.Identities.Extensions;
 
 namespace Modules.Identity.Domain.Identities.DomainEvents
 {
@@ -8,11 +9,8 @@ namespace Modules.Identity.Domain.Identities.DomainEvents
             => new(aggregateId);
 
         private UserCreatedDomainEvent(Guid aggregateId)
+            : base(aggregateId, nameof(UserCreatedDomainEvent), ModuleExtensions.ModuleName)
         {
-            AggregateId = aggregateId;
-            CorrelationId = Guid.NewGuid();
-            OccurredOn = DateTimeOffset.UtcNow;
-            Messagetype = GetType().Name;
         }
 
         private UserCreatedDomainEvent()
