@@ -36,14 +36,13 @@ namespace Modules.Identity.Domain.Identities.Entities
         {
             var identity = new Identity(identityProviderId, document, email, phone);
 
-            identity.AddDomainEvent(new UserCreatedDomainEvent(identity.Id));
+            identity.AddDomainEvent(UserCreatedDomainEvent.Create(identity.Id));
 
             return identity;
         }
 
         protected override void Validate()
         {
-            throw new NotImplementedException();
         }
     }
 }

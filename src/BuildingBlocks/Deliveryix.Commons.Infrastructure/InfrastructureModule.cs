@@ -1,6 +1,9 @@
 ﻿using Deliveryix.Commons.Application.Cache;
+using Deliveryix.Commons.Application.Messaging;
+using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Infrastructure.Cache;
 using Deliveryix.Commons.Infrastructure.Factories;
+using Deliveryix.Commons.Infrastructure.Outbox.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using StackExchange.Redis;
@@ -9,15 +12,10 @@ namespace Deliveryix.Commons.Infrastructure
 {
     public static class InfrastructureModule
     {
-        public static IServiceCollection AddCommonInfrastructure(
-            this IServiceCollection services,
-            string sqlServerConnectionSring,
-            string redisConnectionString
-            )
+        public static IServiceCollection AddCommonInfrastructure(this IServiceCollection services)
         {
             services.AddSingleton(TimeProvider.System);
-            services.AddData(sqlServerConnectionSring);
-            services.AddCacheService(redisConnectionString);
+            services.AddScoped<IDomainEventCollector, DomainEventCollector>();
 
             return services;
         }
@@ -30,6 +28,8 @@ namespace Deliveryix.Commons.Infrastructure
 
                 return new(connectionString);
             });
+
+            services.AddScoped<IOutboxRepository, OutboxRepository>();
 
             return services;
         }

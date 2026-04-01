@@ -2,9 +2,12 @@
 
 namespace Modules.Identity.Domain.Identities.DomainEvents
 {
-    public sealed record UserCreatedDomainEvent : IDomainEvent
+    public sealed record UserCreatedDomainEvent : DomainEvent
     {
-        public UserCreatedDomainEvent(Guid aggregateId)
+        public static UserCreatedDomainEvent Create(Guid aggregateId)
+            => new(aggregateId);
+
+        private UserCreatedDomainEvent(Guid aggregateId)
         {
             AggregateId = aggregateId;
             CorrelationId = Guid.NewGuid();
@@ -12,12 +15,7 @@ namespace Modules.Identity.Domain.Identities.DomainEvents
             Messagetype = GetType().Name;
         }
 
-        public Guid AggregateId { get; }
-
-        public Guid CorrelationId { get; }
-
-        public DateTimeOffset OccurredOn { get; }
-
-        public string Messagetype { get; }
+        private UserCreatedDomainEvent()
+        { }
     }
 }

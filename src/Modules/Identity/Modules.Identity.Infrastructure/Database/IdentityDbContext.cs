@@ -1,4 +1,5 @@
-﻿using Deliveryix.Commons.Infrastructure.Inbox.Configurations;
+﻿using Deliveryix.Commons.Domain.DomainObjects;
+using Deliveryix.Commons.Infrastructure.Inbox.Configurations;
 using Deliveryix.Commons.Infrastructure.Outbox.Configurations;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -12,6 +13,8 @@ namespace Modules.Identity.Infrastructure.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(Schemas.DefaultSchemaName);
+
+            modelBuilder.Ignore<DomainEvent>();
 
             modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
             modelBuilder.ApplyConfiguration(new OutboxMessageConsumerConfiguration());

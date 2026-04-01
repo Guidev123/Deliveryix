@@ -1,45 +1,71 @@
-using Dapper;
+using Deliveryix.Commons.Application.Abstractions;
+using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Domain.DomainObjects;
-using Deliveryix.Commons.Infrastructure.Factories;
-using Deliveryix.Commons.Infrastructure.Outbox.Models;
 using Deliveryix.Commons.Infrastructure.Serializer;
 using Microsoft.Extensions.Options;
 using MidR.Interfaces;
 using Modules.Identity.Infrastructure.Database;
 using Modules.Identity.OutboxWorker.Options;
 using Newtonsoft.Json;
-using System.Data;
 
 namespace Modules.Identity.OutboxWorker
 {
     public class Worker(
-        IPublisher publisher,
-        SqlConnectionFactory sqlConnectionFactory,
-        TimeProvider timeProvider,
+        IServiceProvider serviceProvider,
         IOptions<OutboxOptions> options,
         ILogger<Worker> logger
         ) : BackgroundService
     {
+        private readonly OutboxOptions _outboxOptions = options.Value;
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            using var timer = new PeriodicTimer(
+                TimeSpan.FromSeconds(_outboxOptions.IntervalInSeconds));
+
+            while (await timer.WaitForNextTickAsync(stoppingToken))
+            {
+                try
+                {
+                    await ProcessOutboxAsync(stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "[Identity] Unhandled exception in outbox worker");
+                }
+            }
+        }
+
+        private async Task ProcessOutboxAsync(CancellationToken stoppingToken)
+        {
+            await using var scope = serviceProvider.CreateAsyncScope();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var outboxRepository = scope.ServiceProvider.GetRequiredService<IOutboxRepository>();
+            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+
             logger.LogInformation("[Identity] Beginning to process outbox messages");
 
-            using var connection = sqlConnectionFactory.Create();
-            await connection.OpenAsync(stoppingToken);
+            await unitOfWork.BeginTransactionAsync(stoppingToken);
 
-            using var transaction = await connection.BeginTransactionAsync(stoppingToken);
-
-            var outboxMessages = await GetOutboxMessagesAsync(connection, transaction, options.Value.BatchSize, Schemas.DefaultSchemaName, stoppingToken);
+            var outboxMessages = await outboxRepository.GetAsync(
+                _outboxOptions.BatchSize,
+                Schemas.DefaultSchemaName,
+                stoppingToken);
 
             foreach (var outboxMessage in outboxMessages)
             {
+                await using var messageScope = scope.ServiceProvider.CreateAsyncScope();
+
                 Exception? exception = null;
 
                 try
                 {
-                    var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(outboxMessage.Content, JsonSerializerSettingsExtensions.Instance)!;
+                    var domainEvent = JsonConvert.DeserializeObject<DomainEvent>(
+                        outboxMessage.Content,
+                        JsonSerializerSettingsExtensions.Instance)!;
 
-                    await publisher.PublishToBusAsync(domainEvent, stoppingToken);
+                    var messagePublisher = messageScope.ServiceProvider.GetRequiredService<IPublisher>();
+                    await messagePublisher.PublishAsync(domainEvent, stoppingToken);
                 }
                 catch (Exception ex)
                 {
@@ -47,69 +73,16 @@ namespace Modules.Identity.OutboxWorker
                     exception = ex;
                 }
 
-                await UpdateOutboxMessageAsync(connection, transaction, outboxMessage, exception, Schemas.DefaultSchemaName, stoppingToken);
+                await outboxRepository.UpdateAsync(
+                    Schemas.DefaultSchemaName,
+                    exception,
+                    outboxMessage,
+                    stoppingToken);
             }
 
-            await transaction.CommitAsync(stoppingToken);
+            await unitOfWork.CommitAsync(stoppingToken);
 
             logger.LogInformation("[Identity] Completed process outbox messages");
-        }
-
-        private static async Task<IReadOnlyList<OutboxMessageResponse>> GetOutboxMessagesAsync(
-            IDbConnection connection,
-            IDbTransaction transaction,
-            int batchSize,
-            string schema,
-            CancellationToken cancellationToken
-            )
-        {
-            var sql = @$"
-                SELECT TOP ({batchSize})
-                    Id,
-                    Content
-                FROM {schema}.OutboxMessages WITH (UPDLOCK, ROWLOCK)
-                WHERE ProcessedOn IS NULL
-                ORDER BY OccurredOn";
-
-            var outboxMessages = await connection.QueryAsync<OutboxMessageResponse>(sql, transaction: transaction).WaitAsync(cancellationToken);
-
-            return outboxMessages.ToList();
-        }
-
-        private async Task UpdateOutboxMessageAsync(
-            IDbConnection connection,
-            IDbTransaction transaction,
-            OutboxMessageResponse outboxMessage,
-            Exception? exception,
-            string schema,
-            CancellationToken cancellationToken
-            )
-        {
-            var sql = @$"
-                UPDATE {schema}.OutboxMessages
-                SET ProcessedOn = @ProcessedOn,
-                    Error = @Error
-                WHERE Id = @Id";
-
-            await connection.ExecuteAsync(sql, new
-            {
-                outboxMessage.Id,
-                ProcessedOnUtc = timeProvider.GetUtcNow(),
-                Error = GetExceptionMessage(exception)
-            }, transaction: transaction).WaitAsync(cancellationToken);
-        }
-
-        private static string? GetExceptionMessage(Exception? exception)
-        {
-            if (exception is null)
-                return null;
-
-            return exception switch
-            {
-                DeliveryixException dvEx when dvEx.Error?.Description is not null => dvEx.Error.Description,
-                _ when exception.InnerException?.Message is not null => exception.InnerException.Message,
-                _ => exception.Message
-            };
         }
     }
 }

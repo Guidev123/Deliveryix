@@ -18,7 +18,6 @@ namespace Modules.Identity.Domain.Identities.ValueObjects
 
         protected override void Validate()
         {
-            throw new NotImplementedException();
         }
     }
 }

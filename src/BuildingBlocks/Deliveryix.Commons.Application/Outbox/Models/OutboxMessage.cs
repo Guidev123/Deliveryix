@@ -1,4 +1,4 @@
-﻿namespace Deliveryix.Commons.Infrastructure.Outbox.Models
+﻿namespace Deliveryix.Commons.Application.Outbox.Models
 {
     public sealed class OutboxMessage
     {

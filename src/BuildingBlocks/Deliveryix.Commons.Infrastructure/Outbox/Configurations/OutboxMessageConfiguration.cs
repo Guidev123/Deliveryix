@@ -1,4 +1,4 @@
-﻿using Deliveryix.Commons.Infrastructure.Outbox.Models;
+﻿using Deliveryix.Commons.Application.Outbox.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

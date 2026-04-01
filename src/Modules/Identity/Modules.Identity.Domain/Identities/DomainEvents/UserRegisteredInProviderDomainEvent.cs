@@ -2,25 +2,29 @@
 
 namespace Modules.Identity.Domain.Identities.DomainEvents
 {
-    public sealed record UserRegisteredInProviderDomainEvent : IDomainEvent
+    public sealed record UserRegisteredInProviderDomainEvent : DomainEvent
     {
-        public UserRegisteredInProviderDomainEvent(Guid aggregateId, string email, string document, string phone)
+        public static UserRegisteredInProviderDomainEvent Create(
+             Guid aggregateId,
+             string email,
+             string document,
+             string phone
+            ) => new(aggregateId, email, document, phone);
+
+        private UserRegisteredInProviderDomainEvent(
+            Guid aggregateId, string email, string document, string phone)
+            : base(aggregateId, nameof(UserRegisteredInProviderDomainEvent))
         {
-            CorrelationId = Guid.NewGuid();
-            OccurredOn = DateTimeOffset.UtcNow;
-            Messagetype = GetType().Name;
-            AggregateId = aggregateId;
             Email = email;
             Document = document;
             Phone = phone;
         }
 
-        public Guid AggregateId { get; }
-        public Guid CorrelationId { get; }
-        public DateTimeOffset OccurredOn { get; }
-        public string Messagetype { get; }
-        public string Email { get; }
-        public string Document { get; }
-        public string Phone { get; }
+        private UserRegisteredInProviderDomainEvent()
+        { }
+
+        public string Email { get; set; } = null!;
+        public string Document { get; set; } = null!;
+        public string Phone { get; set; } = null!;
     }
 }

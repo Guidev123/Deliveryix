@@ -2,7 +2,7 @@
 {
     public abstract class Entity
     {
-        private readonly List<IDomainEvent> _domainEvents = [];
+        private readonly List<DomainEvent> _domainEvents = [];
 
         protected Entity()
         {
@@ -12,9 +12,9 @@
 
         public Guid Id { get; protected set; }
         public DateTimeOffset CreatedOn { get; }
-        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+        public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-        public void AddDomainEvent(IDomainEvent domainEvent)
+        public void AddDomainEvent(DomainEvent domainEvent)
         {
             _domainEvents.Add(domainEvent);
         }
@@ -24,7 +24,7 @@
             _domainEvents.Clear();
         }
 
-        public void RemoveDomainEvent(IDomainEvent domainEvent)
+        public void RemoveDomainEvent(DomainEvent domainEvent)
         {
             _domainEvents.Remove(domainEvent);
         }

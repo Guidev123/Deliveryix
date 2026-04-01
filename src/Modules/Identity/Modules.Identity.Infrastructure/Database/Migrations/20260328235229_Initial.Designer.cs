@@ -95,7 +95,7 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
                     b.ToTable("OutboxMessages", "identity");
                 });
 
-            modelBuilder.Entity("Deliveryix.Commons.Infrastructure.Outbox.Models.OutboxMessageMessageConsumer", b =>
+            modelBuilder.Entity("Deliveryix.Commons.Infrastructure.Outbox.Models.OutboxMessageConsumer", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");

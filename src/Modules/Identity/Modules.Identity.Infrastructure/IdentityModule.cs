@@ -1,13 +1,22 @@
 ﻿using Azure.Identity;
+using Deliveryix.Commons.Application.Abstractions;
+using Deliveryix.Commons.Application.Behaviors;
 using Deliveryix.Commons.Infrastructure;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
+using MidR.DependencyInjection;
+using Modules.Identity.Application;
+using Modules.Identity.Application.Identities.Behaviors;
 using Modules.Identity.Application.Identities.Create;
 using Modules.Identity.Application.Identities.Options;
+using Modules.Identity.Application.Identities.Repositories;
 using Modules.Identity.Infrastructure.Database;
+using Modules.Identity.Infrastructure.Database.Repositories;
+using Modules.Identity.Infrastructure.Outbox;
 using Modules.Identity.Infrastructure.Services;
 
 namespace Modules.Identity.Infrastructure
@@ -21,12 +30,36 @@ namespace Modules.Identity.Infrastructure
         {
             var sqlServerConnection = configuration.GetConnectionString(SqlServerConnectionStringSectionName)!;
             var redisConnection = configuration.GetConnectionString(RedisConnectionStringSectionName)!;
-            ArgumentException.ThrowIfNullOrWhiteSpace(sqlServerConnection);
-            ArgumentException.ThrowIfNullOrWhiteSpace(redisConnection);
 
-            services.AddCommonInfrastructure(sqlServerConnection, redisConnection);
+            if (!string.IsNullOrEmpty(sqlServerConnection))
+            {
+                services.AddData(sqlServerConnection);
+            }
+
+            if (!string.IsNullOrEmpty(redisConnection))
+            {
+                services.AddCacheService(redisConnection);
+            }
+
+            services.AddCommonInfrastructure();
 
             services.AddServices(configuration);
+
+            services
+                .AddValidatorsFromAssembly(AssemblyReference.Assembly)
+                .AddMidR(args: AssemblyReference.Assembly)
+                .WithBehaviors(cfg =>
+                {
+                    cfg.AddBehavior(typeof(RequestLoggingBehavior<,>)).WithPriority(1);
+                    cfg.AddBehavior(typeof(RequestValidationBehavior<,>)).WithPriority(2);
+                    cfg.AddBehavior(typeof(RequestTransactionBehavior<,>)).WithPriority(3);
+
+                    cfg.AddBehavior(typeof(NotificationLoggingBehavior<>)).WithPriority(1);
+                    cfg.AddBehavior(typeof(OutboxIdempotencyBehavior<>)).WithPriority(2);
+                });
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IIdentityRepository, IdentityRepository>();
 
             services.AddDbContext<IdentityDbContext>(options =>
             {

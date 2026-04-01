@@ -6,7 +6,7 @@ using Modules.Identity.Domain.Identities.Errors;
 namespace Modules.Identity.Application.Identities.Create
 {
     internal sealed class CreateIdentityCommandHandler(
-        IMicrosoftGraphService graphService,
+        //IMicrosoftGraphService graphService,
         IIdentityRepository identityRepository
         ) : ICommandHandler<CreateIdentityCommand, CreateIdentityResponse>
     {
@@ -18,21 +18,20 @@ namespace Modules.Identity.Application.Identities.Create
                 return Result.Failure<CreateIdentityResponse>(IdentityErrors.AlreadyExists(request.Document));
             }
 
-            var userResult = await graphService.GetIdentityProviderUserAsync(request.Email, cancellationToken);
-            if (userResult.IsFailure)
-            {
-                return Result.Failure<CreateIdentityResponse>(userResult.Error!);
-            }
+            //var userResult = await graphService.GetIdentityProviderUserAsync(request.Email, cancellationToken);
+            //if (userResult.IsFailure)
+            //{
+            //    return Result.Failure<CreateIdentityResponse>(userResult.Error!);
+            //}
 
             var identity = Domain.Identities.Entities.Identity.Create(
-                userResult.Value.ObjectId,
+                /*userResult.Value.ObjectId*/Guid.NewGuid().ToString(),
                 request.Document,
                 request.Email,
                 request.Phone
                 );
 
             identityRepository.Insert(identity);
-            await identityRepository.CommitAsync(cancellationToken);
 
             return new CreateIdentityResponse(identity.Id, identity.IdentityProviderId);
         }

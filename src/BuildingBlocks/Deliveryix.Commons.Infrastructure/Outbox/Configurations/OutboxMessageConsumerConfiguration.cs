@@ -1,12 +1,12 @@
-﻿using Deliveryix.Commons.Infrastructure.Outbox.Models;
+﻿using Deliveryix.Commons.Application.Outbox.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Deliveryix.Commons.Infrastructure.Outbox.Configurations
 {
-    public sealed class OutboxMessageConsumerConfiguration : IEntityTypeConfiguration<OutboxMessageMessageConsumer>
+    public sealed class OutboxMessageConsumerConfiguration : IEntityTypeConfiguration<OutboxMessageConsumer>
     {
-        public void Configure(EntityTypeBuilder<OutboxMessageMessageConsumer> builder)
+        public void Configure(EntityTypeBuilder<OutboxMessageConsumer> builder)
         {
             builder.ToTable("OutboxMessageConsumers");
 

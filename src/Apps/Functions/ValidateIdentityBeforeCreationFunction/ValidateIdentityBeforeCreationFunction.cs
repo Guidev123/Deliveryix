@@ -1,6 +1,6 @@
 using Dapper;
+using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Infrastructure.Factories;
-using Deliveryix.Commons.Infrastructure.Outbox.Models;
 using Deliveryix.Commons.Infrastructure.Serializer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,6 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Modules.Identity.Domain.Identities.DomainEvents;
-using Newtonsoft.Json;
 using ValidateIdentityBeforeCreationFunction.Models;
 
 namespace ValidateIdentityBeforeCreationFunction;
@@ -17,13 +16,16 @@ public class ValidateIdentityBeforeCreationFunction
 {
     private readonly ILogger<ValidateIdentityBeforeCreationFunction> _logger;
     private readonly SqlConnectionFactory _sqlConnectionFactory;
+    private readonly IOutboxRepository _outboxRepository;
     private readonly string _extensionAppId;
+    private const string Schema = "identity";
 
-    public ValidateIdentityBeforeCreationFunction(ILogger<ValidateIdentityBeforeCreationFunction> logger, SqlConnectionFactory sqlConnectionFactory, IConfiguration configuration)
+    public ValidateIdentityBeforeCreationFunction(ILogger<ValidateIdentityBeforeCreationFunction> logger, SqlConnectionFactory sqlConnectionFactory, IConfiguration configuration, IOutboxRepository outboxRepository)
     {
         _logger = logger;
         _sqlConnectionFactory = sqlConnectionFactory;
         _extensionAppId = configuration["Entra_ExtensionsAppId"]!;
+        _outboxRepository = outboxRepository;
     }
 
     [Function("ValidateIdentityBeforeCreation")]
@@ -69,15 +71,9 @@ public class ValidateIdentityBeforeCreationFunction
                 return Extensions.ResponseExtensions.Block("Unable to process your registration.");
             }
 
-            var domainEvent = new UserRegisteredInProviderDomainEvent(Guid.Empty, email, documentNumber, phoneNumber);
+            var domainEvent = UserRegisteredInProviderDomainEvent.Create(Guid.Empty, email, documentNumber, phoneNumber);
 
-            await InsertOutboxMessageAsync(new()
-            {
-                Id = domainEvent.CorrelationId,
-                Content = JsonConvert.SerializeObject(domainEvent, JsonSerializerSettingsExtensions.Instance),
-                Type = domainEvent.Messagetype,
-                OccurredOn = domainEvent.OccurredOn
-            }, cancellationToken);
+            await _outboxRepository.InsertAsync(Schema, domainEvent, cancellationToken);
 
             return Extensions.ResponseExtensions.Continue();
         }
@@ -112,25 +108,5 @@ public class ValidateIdentityBeforeCreationFunction
             """";
 
         return await connection.ExecuteScalarAsync<bool>(sql, new { Document = document, Email = email }).WaitAsync(cancellationToken);
-    }
-
-    private async Task<int> InsertOutboxMessageAsync(OutboxMessage outboxMessage, CancellationToken cancellationToken)
-    {
-        using var connection = _sqlConnectionFactory.Create();
-
-        const string sql = """
-            INSERT INTO [identity].OutboxMessages
-            VALUES(@Id, @Type, @Content, @OccurredOn, @ProcessedOn, @Error)
-            """;
-
-        return await connection.ExecuteAsync(sql, new
-        {
-            outboxMessage.Id,
-            outboxMessage.Type,
-            outboxMessage.Content,
-            outboxMessage.OccurredOn,
-            outboxMessage.ProcessedOn,
-            outboxMessage.Error
-        }).WaitAsync(cancellationToken);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Deliveryix.Commons.Domain.DomainObjects;
+﻿using Deliveryix.Commons.Application.Abstractions;
 
 namespace Modules.Identity.Application.Identities.Repositories
 {
