@@ -1,25 +1,26 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Deliveryix.Commons.Domain.DomainObjects
+namespace Deliveryix.Commons.Application.Messaging
 {
-    public abstract record DomainEvent : IDomainEvent
+    public abstract record IntegrationEvent : IIntegrationEvent
     {
         [JsonConstructor]
-        protected DomainEvent() { }
+        protected IntegrationEvent() { }
 
-        protected DomainEvent(Guid aggregateId, string messageType, string module)
+        protected IntegrationEvent(string messageType, string module)
         {
-            AggregateId = aggregateId;
             CorrelationId = Guid.NewGuid();
             OccurredOn = DateTimeOffset.UtcNow;
             MessageType = messageType;
             Module = module;
         }
 
-        public Guid AggregateId { get; set; }
         public Guid CorrelationId { get; set; }
+
         public DateTimeOffset OccurredOn { get; set; }
+
         public string MessageType { get; set; } = null!;
+
         public string Module { get; set; } = null!;
     }
 }

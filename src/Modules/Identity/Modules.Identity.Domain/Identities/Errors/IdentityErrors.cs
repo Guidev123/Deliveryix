@@ -4,9 +4,13 @@ namespace Modules.Identity.Domain.Identities.Errors
 {
     public sealed class IdentityErrors
     {
-        public static Error UserNotFound(string email) => Error.NotFound(
-            "Identities.UserNotFound",
-            $"User with email {email} was not found");
+        public static Error IdentityNotFound(string email) => Error.NotFound(
+            "Identities.IdentityNotFound",
+            $"Identity with email {email} was not found");
+
+        public static Error IdentityNotFound(Guid id) => Error.NotFound(
+            "Identities.IdentityNotFound",
+            $"Identity with identifier {id} was not found");
 
         public static Error GraphApiError(string? code, string? message) => Error.Problem(
             "Identities.GraphApiError",

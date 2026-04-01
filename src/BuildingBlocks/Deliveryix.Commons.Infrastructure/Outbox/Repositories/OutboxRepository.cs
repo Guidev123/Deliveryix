@@ -4,7 +4,6 @@ using Deliveryix.Commons.Application.Extensions;
 using Deliveryix.Commons.Application.Outbox.Models;
 using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Domain.DomainObjects;
-using Deliveryix.Commons.Infrastructure.Serializer;
 using Newtonsoft.Json;
 
 namespace Deliveryix.Commons.Infrastructure.Outbox.Repositories
@@ -37,7 +36,7 @@ namespace Deliveryix.Commons.Infrastructure.Outbox.Repositories
             var outboxMessage = new OutboxMessage
             {
                 Id = domainEvent.CorrelationId,
-                Type = domainEvent.Messagetype,
+                Type = domainEvent.MessageType,
                 Content = JsonConvert.SerializeObject(domainEvent, JsonSerializerSettingsExtensions.Instance)!,
                 OccurredOn = domainEvent.OccurredOn,
             };

@@ -2,6 +2,7 @@
 using Deliveryix.Commons.Application.Abstractions;
 using Deliveryix.Commons.Application.Behaviors;
 using Deliveryix.Commons.Infrastructure;
+using Deliveryix.Commons.Infrastructure.EventBus;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,8 @@ namespace Modules.Identity.Infrastructure
 
         public static IServiceCollection AddIdentityModule(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<ServiceBusOptions>(configuration.GetSection(ServiceBusOptions.SectionName));
+
             var sqlServerConnection = configuration.GetConnectionString(SqlServerConnectionStringSectionName)!;
             var redisConnection = configuration.GetConnectionString(RedisConnectionStringSectionName)!;
 

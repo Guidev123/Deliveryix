@@ -1,9 +1,14 @@
-﻿using Deliveryix.Commons.Application.Cache;
+﻿using Azure.Identity;
+using Azure.Messaging.ServiceBus;
+using Deliveryix.Commons.Application.Cache;
+using Deliveryix.Commons.Application.EventBus;
 using Deliveryix.Commons.Application.Messaging;
 using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Infrastructure.Cache;
+using Deliveryix.Commons.Infrastructure.EventBus;
 using Deliveryix.Commons.Infrastructure.Factories;
 using Deliveryix.Commons.Infrastructure.Outbox.Repositories;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using StackExchange.Redis;
@@ -53,6 +58,44 @@ namespace Deliveryix.Commons.Infrastructure
                 services.TryAddSingleton<ICacheService, CacheService>();
                 services.AddDistributedMemoryCache();
             }
+
+            return services;
+        }
+
+        public static IServiceCollection AddServiceBus(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var section = configuration.GetSection("ServiceBus");
+            var fullyQualifiedNamespace = section["FullyQualifiedNamespace"];
+            var connectionString = section["ConnectionString"];
+
+            var clientOptions = new ServiceBusClientOptions
+            {
+                TransportType = ServiceBusTransportType.AmqpTcp,
+                RetryOptions = new ServiceBusRetryOptions
+                {
+                    Mode = ServiceBusRetryMode.Exponential,
+                    MaxRetries = 3,
+                    Delay = TimeSpan.FromMilliseconds(800),
+                    MaxDelay = TimeSpan.FromSeconds(60)
+                }
+            };
+
+            services.AddSingleton(_ =>
+            {
+                if (!string.IsNullOrWhiteSpace(fullyQualifiedNamespace))
+                    return new ServiceBusClient(fullyQualifiedNamespace, new DefaultAzureCredential(), clientOptions);
+
+                if (!string.IsNullOrWhiteSpace(connectionString))
+                    return new ServiceBusClient(connectionString, clientOptions);
+
+                throw new InvalidOperationException(
+                    "Configure 'ServiceBus:FullyQualifiedNamespace' (Managed Identity) " +
+                    "or 'ServiceBus:ConnectionString' (dev local) on appsettings.json.");
+            });
+
+            services.AddSingleton<IEventBus, AzureServiceBus>();
 
             return services;
         }

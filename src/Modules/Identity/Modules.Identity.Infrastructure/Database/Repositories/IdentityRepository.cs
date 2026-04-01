@@ -10,7 +10,13 @@ namespace Modules.Identity.Infrastructure.Database.Repositories
         ) : IIdentityRepository
     {
         public Task<bool> ExistsAsync(string document, CancellationToken cancellationToken = default)
-            => context.Identities.AnyAsync(c => c.Document.Number == document, cancellationToken);
+            => context.Identities.AsNoTracking().AnyAsync(c => c.Document.Number == document, cancellationToken);
+
+        public Task<Domain.Identities.Entities.Identity?> GetByDocumentAsync(string document, CancellationToken cancellationToken = default)
+            => context.Identities.AsNoTracking().FirstOrDefaultAsync(c => c.Document.Number == document, cancellationToken);
+
+        public Task<Domain.Identities.Entities.Identity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+            => context.Identities.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
         public void Insert(Domain.Identities.Entities.Identity identity)
         {

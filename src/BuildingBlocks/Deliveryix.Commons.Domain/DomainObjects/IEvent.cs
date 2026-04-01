@@ -6,8 +6,6 @@ namespace Deliveryix.Commons.Domain.DomainObjects
     {
         Guid CorrelationId { get; }
         DateTimeOffset OccurredOn { get; }
-        string Messagetype { get; }
-
-        static T Create<T>(T @event) where T : IEvent => @event;
+        string MessageType { get; }
     }
 }

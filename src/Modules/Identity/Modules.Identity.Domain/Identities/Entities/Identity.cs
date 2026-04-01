@@ -36,9 +36,23 @@ namespace Modules.Identity.Domain.Identities.Entities
         {
             var identity = new Identity(identityProviderId, document, email, phone);
 
-            identity.AddDomainEvent(UserCreatedDomainEvent.Create(identity.Id));
+            identity.AddIdentityCreatedDomainEvent();
 
             return identity;
+        }
+
+        private void AddIdentityCreatedDomainEvent()
+        {
+            switch (Type)
+            {
+                case IdentityType.Individual:
+                    AddDomainEvent(IndividualAccountCreatedDomainEvent.Create(Id, Document.Number));
+                    break;
+
+                case IdentityType.Business:
+                    AddDomainEvent(BusinessAccountCreatedDomainEvent.Create(Id, Document.Number));
+                    break;
+            }
         }
 
         protected override void Validate()

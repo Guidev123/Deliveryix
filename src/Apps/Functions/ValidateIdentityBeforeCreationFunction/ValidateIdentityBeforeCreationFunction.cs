@@ -1,7 +1,7 @@
 using Dapper;
+using Deliveryix.Commons.Application.Extensions;
 using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Infrastructure.Factories;
-using Deliveryix.Commons.Infrastructure.Serializer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;

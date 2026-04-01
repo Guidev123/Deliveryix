@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Deliveryix.Commons.Infrastructure.Serializer
+namespace Deliveryix.Commons.Application.Extensions
 {
     public static class JsonSerializerSettingsExtensions
     {

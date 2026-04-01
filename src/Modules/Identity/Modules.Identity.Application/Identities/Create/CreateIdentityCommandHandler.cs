@@ -18,14 +18,14 @@ namespace Modules.Identity.Application.Identities.Create
                 return Result.Failure<CreateIdentityResponse>(IdentityErrors.AlreadyExists(request.Document));
             }
 
-            //var userResult = await graphService.GetIdentityProviderUserAsync(request.Email, cancellationToken);
-            //if (userResult.IsFailure)
-            //{
-            //    return Result.Failure<CreateIdentityResponse>(userResult.Error!);
-            //}
+            var userResult = await graphService.GetIdentityProviderUserAsync(request.Email, cancellationToken);
+            if (userResult.IsFailure)
+            {
+                return Result.Failure<CreateIdentityResponse>(userResult.Error!);
+            }
 
             var identity = Domain.Identities.Entities.Identity.Create(
-                /*userResult.Value.ObjectId*/Guid.NewGuid().ToString(),
+                userResult.Value.ObjectId,
                 request.Document,
                 request.Email,
                 request.Phone

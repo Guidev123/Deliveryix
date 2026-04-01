@@ -28,7 +28,7 @@ namespace Modules.Identity.Infrastructure.Services
 
                 if (user is null)
                 {
-                    return Result.Failure<IdentityProviderUserResponse>(IdentityErrors.UserNotFound(email));
+                    return Result.Failure<IdentityProviderUserResponse>(IdentityErrors.IdentityNotFound(email));
                 }
 
                 return new IdentityProviderUserResponse(user.Id!);
