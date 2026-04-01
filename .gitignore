@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /src/Apps/Workers/Modules.Identity.OutboxWorker/appsettings.Development.json
+/src/Apps/APIs/Deliveryix.WebApi/appsettings.Development.json
