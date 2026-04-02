@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Deliveryix.Commons.Application.Messaging;
 
 namespace Modules.Identity.Application.AccessManagement.UseCases.DeleteRole
 {
-    internal class DeleteRoleCommand
-    {
-    }
+    public sealed record DeleteRoleCommand(string RoleName) : ICommand;
 }

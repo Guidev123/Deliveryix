@@ -11,5 +11,10 @@ namespace Modules.Identity.Domain.AcessManagement.Errors
             "AcessManagement.RoleNotFound",
             $"The role '{roleName}' was not found"
             );
+
+        public static Error PermissionNotFound(string permission) => Error.NotFound(
+            "AcessManagement.PermissionNotFound",
+            $"The permission '{permission}' was not found"
+            );
     }
 }
