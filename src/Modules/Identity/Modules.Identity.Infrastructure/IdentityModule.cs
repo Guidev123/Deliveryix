@@ -51,7 +51,7 @@ namespace Modules.Identity.Infrastructure
             services
                 .AddCommonsConfigurations()
                 .AddEventCollector()
-                .AddValidatorsFromAssembly(AssemblyReference.Assembly)
+                .AddValidatorsFromAssembly(AssemblyReference.Assembly, includeInternalTypes: true)
                 .AddMidR(args: AssemblyReference.Assembly)
                 .WithBehaviors(cfg =>
                 {

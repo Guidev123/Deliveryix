@@ -1,5 +1,7 @@
-﻿using Deliveryix.Commons.Domain.ValueObjects;
+﻿using Deliveryix.Commons.Domain.DomainObjects;
+using Deliveryix.Commons.Domain.ValueObjects;
 using Modules.Identity.Domain.Identities.Enums;
+using Modules.Identity.Domain.Identities.Errors;
 
 namespace Modules.Identity.Domain.Identities.ValueObjects
 {
@@ -22,6 +24,9 @@ namespace Modules.Identity.Domain.Identities.ValueObjects
 
         protected override void Validate()
         {
+            AssertionConcern.EnsureTrue(
+                Enum.IsDefined(typeof(IdentityStatus), Status),
+                IdentityErrors.InvalidIdentityStatus().Description);
         }
     }
 }

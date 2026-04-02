@@ -21,5 +21,25 @@ namespace Modules.Identity.Domain.Identities.Errors
         public static Error AlreadyExists(string document) => Error.Conflict(
             "Identities.AlreadyExists",
             $"Identity with document {document} already exists");
+
+        public static Error InvalidEmail() => Error.Problem(
+             "Identities.InvalidEmail",
+             "Email address is invalid or exceeds maximum length");
+
+        public static Error InvalidPhone() => Error.Problem(
+            "Identities.InvalidPhone",
+            "Phone number is invalid. Expected format: +[country code][number] (E.164)");
+
+        public static Error InvalidDocument() => Error.Problem(
+            "Identities.InvalidDocument",
+            "Document number is invalid. Must be a valid CPF (11 digits) or CNPJ (14 digits)");
+
+        public static Error InvalidIdentityStatus() => Error.Problem(
+            "Identities.InvalidIdentityStatus",
+            "Identity status is invalid");
+
+        public static Error InvalidIdentityProviderId() => Error.Problem(
+            "Identities.InvalidIdentityProviderId",
+            "Identity provider identifier must not be empty");
     }
 }

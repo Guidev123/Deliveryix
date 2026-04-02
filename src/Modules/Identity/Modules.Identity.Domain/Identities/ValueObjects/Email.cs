@@ -1,4 +1,6 @@
-﻿using Deliveryix.Commons.Domain.ValueObjects;
+﻿using Deliveryix.Commons.Domain.DomainObjects;
+using Deliveryix.Commons.Domain.ValueObjects;
+using Modules.Identity.Domain.Identities.Errors;
 
 namespace Modules.Identity.Domain.Identities.ValueObjects
 {
@@ -21,6 +23,12 @@ namespace Modules.Identity.Domain.Identities.ValueObjects
 
         protected override void Validate()
         {
+            AssertionConcern.EnsureNotEmpty(Address, IdentityErrors.InvalidEmail().Description);
+            AssertionConcern.EnsureMaxLength(Address, MaxEmailLength, IdentityErrors.InvalidEmail().Description);
+            AssertionConcern.EnsureMatchesPattern(
+                @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                Address,
+                IdentityErrors.InvalidEmail().Description);
         }
     }
 }

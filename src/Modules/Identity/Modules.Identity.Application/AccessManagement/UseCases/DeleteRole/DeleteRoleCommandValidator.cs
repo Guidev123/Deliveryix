@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Modules.Identity.Domain.AcessManagement.Errors;
 
 namespace Modules.Identity.Application.AccessManagement.UseCases.DeleteRole
 {
@@ -6,6 +7,10 @@ namespace Modules.Identity.Application.AccessManagement.UseCases.DeleteRole
     {
         public DeleteRoleCommandValidator()
         {
+            RuleFor(x => x.RoleName)
+                .NotEmpty()
+                    .WithErrorCode(AccessManagementErrors.InvalidRoleName.Code)
+                    .WithMessage(AccessManagementErrors.InvalidRoleName.Description);
         }
     }
 }

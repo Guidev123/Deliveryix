@@ -27,7 +27,7 @@ namespace Deliveryix.Commons.Domain.DomainObjects
 
         public static void EnsureMatchesPattern(string pattern, string value, string message)
         {
-            if (!Regex.IsMatch(value, pattern)) throw new DomainException(message);
+            if (!Regex.IsMatch(value, pattern, new RegexOptions(), TimeSpan.FromMilliseconds(50))) throw new DomainException(message);
         }
 
         public static void EnsureNotEmpty(string value, string message)

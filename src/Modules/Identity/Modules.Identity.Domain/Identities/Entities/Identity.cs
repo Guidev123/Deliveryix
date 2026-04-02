@@ -2,6 +2,7 @@
 using Modules.Identity.Domain.AcessManagement.Models;
 using Modules.Identity.Domain.Identities.DomainEvents;
 using Modules.Identity.Domain.Identities.Enums;
+using Modules.Identity.Domain.Identities.Errors;
 using Modules.Identity.Domain.Identities.ValueObjects;
 
 namespace Modules.Identity.Domain.Identities.Entities
@@ -57,6 +58,13 @@ namespace Modules.Identity.Domain.Identities.Entities
 
         protected override void Validate()
         {
+            AssertionConcern.EnsureNotEmpty(
+                IdentityProviderId,
+                IdentityErrors.InvalidIdentityProviderId().Description);
+            AssertionConcern.EnsureNotNull(Document, IdentityErrors.InvalidDocument().Description);
+            AssertionConcern.EnsureNotNull(Email, IdentityErrors.InvalidEmail().Description);
+            AssertionConcern.EnsureNotNull(Phone, IdentityErrors.InvalidPhone().Description);
+            AssertionConcern.EnsureNotNull(State, IdentityErrors.InvalidIdentityStatus().Description);
         }
     }
 }
