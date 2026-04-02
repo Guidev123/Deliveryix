@@ -8,7 +8,6 @@ namespace Modules.Identity.Domain.Identities.ValueObjects
         private IdentityState(IdentityStatus status)
         {
             Status = status;
-            DeletedOn = !IsActive ? DateTimeOffset.UtcNow : null;
             Validate();
         }
 
@@ -17,9 +16,6 @@ namespace Modules.Identity.Domain.Identities.ValueObjects
 
         public IdentityStatus Status { get; }
         public DateTimeOffset? DeletedOn { get; }
-        public bool IsActive =>
-            Status == IdentityStatus.Active
-            && DeletedOn is not null;
 
         public static implicit operator IdentityState(IdentityStatus status)
             => new(status);
