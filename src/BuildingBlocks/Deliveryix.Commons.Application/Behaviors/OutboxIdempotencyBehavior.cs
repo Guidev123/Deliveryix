@@ -13,7 +13,7 @@ namespace Deliveryix.Commons.Application.Behaviors
     {
         public async Task ExecuteAsync(TNotification notification, NotificationDelegate next, CancellationToken cancellationToken)
         {
-            var outboxMessageConsumer = new OutboxMessageConsumer(notification.CorrelationId, notification.Messagetype);
+            var outboxMessageConsumer = new OutboxMessageConsumer(notification.CorrelationId, notification.MessageType);
 
             var schema = notification.Module;
 

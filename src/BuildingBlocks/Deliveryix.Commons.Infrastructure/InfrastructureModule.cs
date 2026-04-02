@@ -7,6 +7,7 @@ using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Infrastructure.Cache;
 using Deliveryix.Commons.Infrastructure.EventBus;
 using Deliveryix.Commons.Infrastructure.Factories;
+using Deliveryix.Commons.Infrastructure.Outbox.Options;
 using Deliveryix.Commons.Infrastructure.Outbox.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +18,15 @@ namespace Deliveryix.Commons.Infrastructure
 {
     public static class InfrastructureModule
     {
-        public static IServiceCollection AddCommonInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddCommonsConfigurations(this IServiceCollection services)
         {
             services.AddSingleton(TimeProvider.System);
+
+            return services;
+        }
+
+        public static IServiceCollection AddEventCollector(this IServiceCollection services)
+        {
             services.AddScoped<IDomainEventCollector, DomainEventCollector>();
 
             return services;
@@ -33,8 +40,6 @@ namespace Deliveryix.Commons.Infrastructure
 
                 return new(connectionString);
             });
-
-            services.AddScoped<IOutboxRepository, OutboxRepository>();
 
             return services;
         }
@@ -66,6 +71,8 @@ namespace Deliveryix.Commons.Infrastructure
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            services.Configure<ServiceBusOptions>(configuration.GetSection(ServiceBusOptions.SectionName));
+
             var section = configuration.GetSection("ServiceBus");
             var fullyQualifiedNamespace = section["FullyQualifiedNamespace"];
             var connectionString = section["ConnectionString"];
@@ -96,6 +103,15 @@ namespace Deliveryix.Commons.Infrastructure
             });
 
             services.AddSingleton<IEventBus, AzureServiceBus>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddOutbox(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<OutboxOptions>(configuration.GetSection(OutboxOptions.SectionName));
+
+            services.AddScoped<IOutboxRepository, OutboxRepository>();
 
             return services;
         }

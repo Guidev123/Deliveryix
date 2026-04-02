@@ -2,10 +2,10 @@ using Deliveryix.Commons.Application.Abstractions;
 using Deliveryix.Commons.Application.Extensions;
 using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Domain.DomainObjects;
+using Deliveryix.Commons.Infrastructure.Outbox.Options;
 using Microsoft.Extensions.Options;
 using MidR.Interfaces;
 using Modules.Identity.Domain.Identities.Extensions;
-using Modules.Identity.OutboxWorker.Options;
 using Newtonsoft.Json;
 
 namespace Modules.Identity.OutboxWorker

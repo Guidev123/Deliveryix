@@ -28,7 +28,10 @@ namespace Modules.Identity.Application.Identities.DomainEvents
                 identity.Document.Number,
                 identity.Phone.Number);
 
-            await eventBus.PublishAsync(@event.Topic, IntegrationEnvelope.FromEvent(@event), cancellationToken);
+            await eventBus.PublishAsync(
+                BusinessAccountCreatedIntegrationEvent.Topic,
+                IntegrationEnvelope.FromEvent(@event),
+                cancellationToken);
         }
     }
 }

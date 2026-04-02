@@ -26,28 +26,21 @@ namespace Modules.Identity.Infrastructure
         public const string SqlServerConnectionStringSectionName = "SqlServer";
         public const string RedisConnectionStringSectionName = "Redis";
 
-        public static IServiceCollection AddIdentityModule(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddIdentityFullInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<ServiceBusOptions>(configuration.GetSection(ServiceBusOptions.SectionName));
+            return services
+                    .AddIdentityCore()
+                    .AddIdentityPersistence(configuration)
+                    .AddIdentityCache(configuration)
+                    .AddIdentityGraphClient(configuration)
+                    .AddServiceBus(configuration);
+        }
 
-            var sqlServerConnection = configuration.GetConnectionString(SqlServerConnectionStringSectionName)!;
-            var redisConnection = configuration.GetConnectionString(RedisConnectionStringSectionName)!;
-
-            if (!string.IsNullOrEmpty(sqlServerConnection))
-            {
-                services.AddData(sqlServerConnection);
-            }
-
-            if (!string.IsNullOrEmpty(redisConnection))
-            {
-                services.AddCacheService(redisConnection);
-            }
-
-            services.AddCommonInfrastructure();
-
-            services.AddServices(configuration);
-
+        public static IServiceCollection AddIdentityCore(this IServiceCollection services)
+        {
             services
+                .AddCommonsConfigurations()
+                .AddEventCollector()
                 .AddValidatorsFromAssembly(AssemblyReference.Assembly)
                 .AddMidR(args: AssemblyReference.Assembly)
                 .WithBehaviors(cfg =>
@@ -60,29 +53,48 @@ namespace Modules.Identity.Infrastructure
                     cfg.AddBehavior(typeof(OutboxIdempotencyBehavior<>)).WithPriority(2);
                 });
 
+            return services;
+        }
+
+        public static IServiceCollection AddIdentityPersistence(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var connectionString = configuration.GetConnectionString(SqlServerConnectionStringSectionName)!;
+
+            services.AddData(connectionString);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
-
             services.AddDbContext<IdentityDbContext>(options =>
-            {
-                options.UseSqlServer(sqlServerConnection);
-            });
+                options.UseSqlServer(connectionString));
 
             return services;
         }
 
-        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddIdentityCache(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
-            services.Configure<MicrosoftGraphOptions>(configuration.GetSection(MicrosoftGraphOptions.SectionName));
+            var redisConnection = configuration.GetConnectionString(RedisConnectionStringSectionName)!;
+            services.AddCacheService(redisConnection);
+
+            return services;
+        }
+
+        public static IServiceCollection AddIdentityGraphClient(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.Configure<MicrosoftGraphOptions>(
+                configuration.GetSection(MicrosoftGraphOptions.SectionName));
 
             services.AddSingleton(sp =>
             {
-                var options = sp.GetRequiredService<IOptions<MicrosoftGraphOptions>>();
-                var graphOptions = options.Value;
+                var opts = sp.GetRequiredService<IOptions<MicrosoftGraphOptions>>().Value;
+                var credential = new ClientSecretCredential(
+                    opts.TenantId, opts.ClientId, opts.ClientSecret);
 
-                var credential = new ClientSecretCredential(graphOptions.TenantId, graphOptions.ClientId, graphOptions.ClientSecret);
-
-                return new GraphServiceClient(credential, scopes: [graphOptions.Scope]);
+                return new GraphServiceClient(credential, scopes: [opts.Scope]);
             });
 
             services.AddScoped<IMicrosoftGraphService, MicrosoftGraphService>();

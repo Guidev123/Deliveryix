@@ -1,4 +1,4 @@
-﻿namespace Modules.Identity.OutboxWorker.Options
+﻿namespace Deliveryix.Commons.Infrastructure.Outbox.Options
 {
     public sealed class OutboxOptions
     {

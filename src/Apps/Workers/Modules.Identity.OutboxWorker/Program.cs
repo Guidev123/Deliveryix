@@ -1,13 +1,16 @@
+using Deliveryix.Commons.Infrastructure;
 using Modules.Identity.Infrastructure;
 using Modules.Identity.OutboxWorker;
-using Modules.Identity.OutboxWorker.Options;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
 
-builder.Services.Configure<OutboxOptions>(builder.Configuration.GetSection(OutboxOptions.SectionName));
-
-builder.Services.AddIdentityModule(builder.Configuration);
+builder.Services
+    .AddIdentityCore()
+    .AddIdentityPersistence(builder.Configuration)
+    .AddOutbox(builder.Configuration)
+    .AddServiceBus(builder.Configuration)
+    .AddIdentityGraphClient(builder.Configuration);
 
 var host = builder.Build();
 host.Run();

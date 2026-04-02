@@ -48,6 +48,8 @@ namespace Deliveryix.Commons.Application.Behaviors
                     logger.LogError(ex, "Notification handlers for {NotificationName} failed in {ExecutionTimeInMilliseconds}ms with unhandled exception",
                         notificationName,
                         executionTime);
+
+                    throw;
                 }
             }
         }

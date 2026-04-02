@@ -24,7 +24,7 @@ public class ValidateIdentityBeforeCreationFunction
     {
         _logger = logger;
         _sqlConnectionFactory = sqlConnectionFactory;
-        _extensionAppId = configuration["Entra_ExtensionsAppId"]!;
+        _extensionAppId = configuration["Entra:ExtensionsAppId"]!;
         _outboxRepository = outboxRepository;
     }
 
@@ -71,7 +71,7 @@ public class ValidateIdentityBeforeCreationFunction
                 return Extensions.ResponseExtensions.Block("Unable to process your registration.");
             }
 
-            var domainEvent = UserRegisteredInProviderDomainEvent.Create(Guid.Empty, email, documentNumber, phoneNumber);
+            var domainEvent = IdentityRegisteredInProviderDomainEvent.Create(Guid.Empty, email, documentNumber, phoneNumber);
 
             await _outboxRepository.InsertAsync(Schema, domainEvent, cancellationToken);
 

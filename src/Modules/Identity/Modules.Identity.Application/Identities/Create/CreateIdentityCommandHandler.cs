@@ -6,7 +6,7 @@ using Modules.Identity.Domain.Identities.Errors;
 namespace Modules.Identity.Application.Identities.Create
 {
     internal sealed class CreateIdentityCommandHandler(
-        //IMicrosoftGraphService graphService,
+        IMicrosoftGraphService graphService,
         IIdentityRepository identityRepository
         ) : ICommandHandler<CreateIdentityCommand, CreateIdentityResponse>
     {

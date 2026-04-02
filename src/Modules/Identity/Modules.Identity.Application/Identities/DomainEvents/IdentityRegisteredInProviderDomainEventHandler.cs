@@ -5,9 +5,9 @@ using Modules.Identity.Domain.Identities.DomainEvents;
 
 namespace Modules.Identity.Application.Identities.DomainEvents
 {
-    internal sealed class UserRegisteredInProviderDomainEventHandler(ISender sender) : INotificationHandler<UserRegisteredInProviderDomainEvent>
+    internal sealed class IdentityRegisteredInProviderDomainEventHandler(ISender sender) : INotificationHandler<IdentityRegisteredInProviderDomainEvent>
     {
-        public async Task ExecuteAsync(UserRegisteredInProviderDomainEvent notification, CancellationToken cancellationToken)
+        public async Task ExecuteAsync(IdentityRegisteredInProviderDomainEvent notification, CancellationToken cancellationToken)
         {
             var result = await sender.SendAsync(new CreateIdentityCommand(
                 notification.Email,

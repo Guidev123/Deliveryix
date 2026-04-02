@@ -3,6 +3,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Modules.Identity.Infrastructure;
 using System.Text.Json;
 
 var builder = FunctionsApplication.CreateBuilder(args);
@@ -18,7 +19,10 @@ builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
 
-builder.Services.AddData(
-    builder.Configuration["SqlServer"]!);
+builder.Services
+    .AddIdentityCore()
+    .AddIdentityPersistence(builder.Configuration)
+    .AddServiceBus(builder.Configuration)
+    .AddOutbox(builder.Configuration);
 
 builder.Build().Run();

@@ -3,25 +3,25 @@ using Modules.Identity.Domain.Identities.Extensions;
 
 namespace Modules.Identity.Domain.Identities.DomainEvents
 {
-    public sealed record UserRegisteredInProviderDomainEvent : DomainEvent
+    public sealed record IdentityRegisteredInProviderDomainEvent : DomainEvent
     {
-        public static UserRegisteredInProviderDomainEvent Create(
+        public static IdentityRegisteredInProviderDomainEvent Create(
              Guid aggregateId,
              string email,
              string document,
              string phone
             ) => new(aggregateId, email, document, phone);
 
-        private UserRegisteredInProviderDomainEvent(
+        private IdentityRegisteredInProviderDomainEvent(
             Guid aggregateId, string email, string document, string phone)
-            : base(aggregateId, nameof(UserRegisteredInProviderDomainEvent), ModuleExtensions.ModuleName)
+            : base(aggregateId, nameof(IdentityRegisteredInProviderDomainEvent), ModuleExtensions.ModuleName)
         {
             Email = email;
             Document = document;
             Phone = phone;
         }
 
-        private UserRegisteredInProviderDomainEvent()
+        private IdentityRegisteredInProviderDomainEvent()
         { }
 
         public string Email { get; set; } = null!;

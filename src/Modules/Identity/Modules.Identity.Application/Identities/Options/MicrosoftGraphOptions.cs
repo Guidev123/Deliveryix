@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Modules.Identity.Application.Identities.Options
+﻿namespace Modules.Identity.Application.Identities.Options
 {
     public sealed class MicrosoftGraphOptions
     {
