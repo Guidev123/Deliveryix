@@ -3,7 +3,7 @@ using Deliveryix.Commons.Domain.Results;
 using Modules.Identity.Application.Identities.Repositories;
 using Modules.Identity.Domain.Identities.Errors;
 
-namespace Modules.Identity.Application.Identities.Create
+namespace Modules.Identity.Application.Identities.UseCases.Create
 {
     internal sealed class CreateIdentityCommandHandler(
         IMicrosoftGraphService graphService,

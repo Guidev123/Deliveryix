@@ -1,6 +1,6 @@
 ﻿using Deliveryix.Commons.Domain.DomainObjects;
 using MidR.Interfaces;
-using Modules.Identity.Application.Identities.Create;
+using Modules.Identity.Application.Identities.UseCases.Create;
 using Modules.Identity.Domain.Identities.DomainEvents;
 
 namespace Modules.Identity.Application.Identities.DomainEvents

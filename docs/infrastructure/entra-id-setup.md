@@ -1,6 +1,6 @@
 # Deliveryix — Entra External ID Setup Guide
 
-This guide covers the setup of Microsoft Entra External ID for the Deliveryix project, scoped to the signup flow with email/document uniqueness validation.
+This guide covers the setup of Microsoft Entra External ID for the Deliveryix project, scoped to the signup flow with email/document uniqueness validation, and the Microsoft Graph API integration used to retrieve a user's `objectId` after account creation.
 
 ---
 
@@ -22,7 +22,6 @@ This guide covers the setup of Microsoft Entra External ID for the Deliveryix pr
 4. Fill in:
    - **Tenant Name**: `Deliveryix`
    - **Domain name**: `deliveryix` → becomes `deliveryix.onmicrosoft.com`
-   - **Country/Region**: Brazil
 5. Click **Review + Create → Create**
 6. Wait up to 30 minutes for provisioning
 
@@ -81,7 +80,6 @@ These attributes are collected during signup and validated by the custom extensi
 2. A consent dialog appears for the **Receive custom authentication extension HTTP requests** permission
 3. Click **Accept**
 
-
 ---
 
 ## Phase 5 — Create the User Flow
@@ -116,6 +114,41 @@ These attributes are collected during signup and validated by the custom extensi
 
 ---
 
+## Phase 7 — Register the Api App (`DeliveryixApi`)
+
+This app registration is used by the backend API to query Microsoft Graph and retrieve a user's `objectId` after account creation.
+
+### 7a — Create the app registration
+
+1. Go to **Entra ID → App registrations → New registration**
+2. Fill in:
+   - **Name**: `DeliveryixApi`
+   - **Supported account types**: *Accounts in this organizational directory only*
+   - No Redirect URI (daemon/backend application — no user login)
+3. Click **Register**
+4. Note the **Application (client) ID** and **Directory (tenant) ID**
+
+### 7b — Create a Client Secret
+
+1. Inside the app, go to **Certificates & secrets → Client secrets → New client secret**
+2. Fill in:
+   - **Description**: `graph-api-secret`
+   - **Expiration**: choose according to your rotation policy
+3. Click **Add**
+4. **Copy the `Value` immediately** — it will not be shown again
+
+### 7c — Grant the `User.Read.All` permission
+
+1. Go to **API permissions → Add a permission → Microsoft Graph → Application permissions**
+2. Search for and select `User.Read.All`
+3. Click **Add permissions**
+4. Click **Grant admin consent for Deliveryix** → confirm
+
+> ⚠️ Must be **Application permission** (not Delegated) — the backend runs without a signed-in user.  
+> Admin consent is required for Application permissions and will not work without it.
+
+---
+
 ## Signup Flow
 
 ```
@@ -127,4 +160,18 @@ User fills in attributes on the Entra signup page
     → Unique: returns continueWithDefaultBehavior
   → Entra creates the account in the directory
   → Token is issued to the user
+  → UserRegisteredInProvider event is published (via Outbox)
+    → Identity module consumes the event
+    → Calls MicrosoftGraphService.GetIdentityProviderUserAsync(email)
+    → Stores the returned objectId linked to the local user record
 ```
+
+---
+
+## App Registrations Summary
+
+| App | Purpose |
+|---|---|
+| `DeliveryixWebApp` | Frontend SPA 
+| `DeliveryixValidateIdentityBeforeCreationFunction` | Custom Authentication Extension 
+| `DeliveryixApi` | Backend API

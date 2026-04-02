@@ -1,6 +1,6 @@
 ﻿using Deliveryix.Commons.Domain.Results;
 
-namespace Modules.Identity.Application.Identities.Create
+namespace Modules.Identity.Application.Identities.UseCases.Create
 {
     public interface IMicrosoftGraphService
     {

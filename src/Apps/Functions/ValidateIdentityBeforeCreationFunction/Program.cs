@@ -20,9 +20,9 @@ builder.Services
     .ConfigureFunctionsApplicationInsights();
 
 builder.Services
-    .AddIdentityCore()
+    .AddCommonsConfigurations()
+    .AddEventCollector()
     .AddIdentityPersistence(builder.Configuration)
-    .AddServiceBus(builder.Configuration)
     .AddOutbox(builder.Configuration);
 
 builder.Build().Run();

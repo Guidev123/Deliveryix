@@ -6,6 +6,8 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
 
 builder.Services
+    .AddCommonsConfigurations()
+    .AddEventCollector()
     .AddIdentityCore()
     .AddIdentityPersistence(builder.Configuration)
     .AddOutbox(builder.Configuration)

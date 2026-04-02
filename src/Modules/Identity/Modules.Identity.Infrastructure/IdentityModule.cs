@@ -9,15 +9,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
+using Microsoft.Graph.Models.ODataErrors;
 using MidR.DependencyInjection;
 using Modules.Identity.Application;
 using Modules.Identity.Application.Identities.Behaviors;
-using Modules.Identity.Application.Identities.Create;
+using Modules.Identity.Application.Identities.Exceptions;
 using Modules.Identity.Application.Identities.Options;
 using Modules.Identity.Application.Identities.Repositories;
+using Modules.Identity.Application.Identities.UseCases.Create;
 using Modules.Identity.Infrastructure.Database;
 using Modules.Identity.Infrastructure.Database.Repositories;
 using Modules.Identity.Infrastructure.Services;
+using Polly;
+using Polly.Retry;
 
 namespace Modules.Identity.Infrastructure
 {
@@ -96,6 +100,20 @@ namespace Modules.Identity.Infrastructure
 
                 return new GraphServiceClient(credential, scopes: [opts.Scope]);
             });
+
+            services.AddResiliencePipeline(
+                MicrosoftGraphResilienceKeys.GetUser,
+                builder => builder.AddRetry(new RetryStrategyOptions
+                {
+                    ShouldHandle = new PredicateBuilder()
+                        .Handle<GraphIdentityNotFoundException>()
+                        .Handle<ODataError>(ex => ex.Error?.Code is "Request_ResourceNotFound" or "ServiceNotAvailable"),
+
+                    MaxRetryAttempts = 5,
+                    Delay = TimeSpan.FromSeconds(2),
+                    BackoffType = DelayBackoffType.Exponential,
+                    UseJitter = true,
+                }));
 
             services.AddScoped<IMicrosoftGraphService, MicrosoftGraphService>();
 
