@@ -2,7 +2,7 @@
 using Deliveryix.Commons.Application.Abstractions;
 using Deliveryix.Commons.Application.Behaviors;
 using Deliveryix.Commons.Infrastructure;
-using Deliveryix.Commons.Infrastructure.EventBus;
+using Deliveryix.Commons.WebApi;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,11 +12,13 @@ using Microsoft.Graph;
 using Microsoft.Graph.Models.ODataErrors;
 using MidR.DependencyInjection;
 using Modules.Identity.Application;
-using Modules.Identity.Application.Identities.Behaviors;
+using Modules.Identity.Application.Abstractions;
+using Modules.Identity.Application.AccessManagement.Repositories;
 using Modules.Identity.Application.Identities.Exceptions;
 using Modules.Identity.Application.Identities.Options;
 using Modules.Identity.Application.Identities.Repositories;
 using Modules.Identity.Application.Identities.UseCases.Create;
+using Modules.Identity.Endpoints;
 using Modules.Identity.Infrastructure.Database;
 using Modules.Identity.Infrastructure.Database.Repositories;
 using Modules.Identity.Infrastructure.Services;
@@ -33,7 +35,11 @@ namespace Modules.Identity.Infrastructure
         public static IServiceCollection AddIdentityFullInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             return services
+                    .AddEventCollector()
+                    .AddCommonsConfigurations()
+                    .AddIdentityEndpoints()
                     .AddIdentityCore()
+                    .AddOutbox(configuration)
                     .AddIdentityPersistence(configuration)
                     .AddIdentityCache(configuration)
                     .AddIdentityGraphClient(configuration)
@@ -57,6 +63,15 @@ namespace Modules.Identity.Infrastructure
                     cfg.AddBehavior(typeof(OutboxIdempotencyBehavior<>)).WithPriority(2);
                 });
 
+            services.AddSingleton<IModuleInfo, ModuleInfo>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddIdentityEndpoints(this IServiceCollection services)
+        {
+            services.AddEndpoints(typeof(EndpointsModule).Assembly);
+
             return services;
         }
 
@@ -68,6 +83,7 @@ namespace Modules.Identity.Infrastructure
 
             services.AddData(connectionString);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseSqlServer(connectionString));

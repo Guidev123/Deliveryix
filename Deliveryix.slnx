@@ -20,6 +20,7 @@
   <Folder Name="/src/Modules/Identity/">
     <Project Path="src/Modules/Identity/Modules.Identity.Application/Modules.Identity.Application.csproj" Id="b47e6a7e-4f31-485c-9d11-9edeba8bcdc7" />
     <Project Path="src/Modules/Identity/Modules.Identity.Domain/Modules.Identity.Domain.csproj" />
+    <Project Path="src/Modules/Identity/Modules.Identity.Endpoints/Modules.Identity.Endpoints.csproj" Id="0c3cf8ce-6baf-40bf-a6ac-e5030e80bec0" />
     <Project Path="src/Modules/Identity/Modules.Identity.Infrastructure/Modules.Identity.Infrastructure.csproj" Id="39e60d74-299d-448d-861d-7869fd99463d" />
     <Project Path="src/Modules/Identity/Modules.Identity.IntegrationEvents/Modules.Identity.IntegrationEvents.csproj" Id="05ff2281-a2f0-4120-9cee-a59403ffc97d" />
   </Folder>

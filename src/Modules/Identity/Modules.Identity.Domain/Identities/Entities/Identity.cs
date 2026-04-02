@@ -1,7 +1,7 @@
 ﻿using Deliveryix.Commons.Domain.DomainObjects;
+using Modules.Identity.Domain.AcessManagement.Models;
 using Modules.Identity.Domain.Identities.DomainEvents;
 using Modules.Identity.Domain.Identities.Enums;
-using Modules.Identity.Domain.Identities.Models;
 using Modules.Identity.Domain.Identities.ValueObjects;
 
 namespace Modules.Identity.Domain.Identities.Entities

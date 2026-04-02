@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Modules.Identity.Domain.Identities.Models;
+using Modules.Identity.Domain.AcessManagement.Models;
 
 namespace Modules.Identity.Infrastructure.Database.Configurations
 {

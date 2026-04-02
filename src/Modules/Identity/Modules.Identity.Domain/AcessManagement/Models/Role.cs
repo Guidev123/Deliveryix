@@ -1,4 +1,4 @@
-﻿namespace Modules.Identity.Domain.Identities.Models
+﻿namespace Modules.Identity.Domain.AcessManagement.Models
 {
     public sealed class Role
     {

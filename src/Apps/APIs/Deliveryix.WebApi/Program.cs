@@ -1,19 +1,13 @@
-using Modules.Identity.Infrastructure;
-using System.Text.Json;
+using Deliveryix.WebApi.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-});
-
-builder.Services.AddIdentityFullInfrastructure(builder.Configuration);
+builder
+    .AddApiConfiguration()
+    .AddIdentity();
 
 var app = builder.Build();
 
-app.MapOpenApi();
+app.UseApiConfiguration();
 
 app.Run();
