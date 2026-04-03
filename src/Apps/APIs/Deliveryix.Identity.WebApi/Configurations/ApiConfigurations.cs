@@ -3,7 +3,7 @@ using Modules.Identity.Infrastructure;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Deliveryix.WebApi.Configurations
+namespace Deliveryix.Identity.WebApi.Configurations
 {
     public static class ApiConfigurations
     {
@@ -20,6 +20,13 @@ namespace Deliveryix.WebApi.Configurations
             });
 
             builder.Services.AddSwaggerConfig();
+
+            return builder;
+        }
+
+        public static WebApplicationBuilder AddIdentity(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddIdentityFullInfrastructure(builder.Configuration);
 
             return builder;
         }

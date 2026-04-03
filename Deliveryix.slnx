@@ -2,6 +2,7 @@
   <Folder Name="/src/" />
   <Folder Name="/src/Apps/" />
   <Folder Name="/src/Apps/APIs/">
+    <Project Path="src/Apps/APIs/Deliveryix.Identity.WebApi/Deliveryix.Identity.WebApi.csproj" Id="cedd96a5-022c-4e6e-88a5-d6debad2e25d" />
     <Project Path="src/Apps/APIs/Deliveryix.WebApi/Deliveryix.WebApi.csproj" />
   </Folder>
   <Folder Name="/src/Apps/Functions/">

@@ -114,7 +114,7 @@ These attributes are collected during signup and validated by the custom extensi
 
 ---
 
-## Phase 7 — Register the Api App (`DeliveryixApi`)
+## Phase 7 — Register the Identity API (IAM App) (`IdentityApi`)
 
 This app registration is used by the backend API to query Microsoft Graph and retrieve a user's `objectId` after account creation.
 
@@ -122,7 +122,7 @@ This app registration is used by the backend API to query Microsoft Graph and re
 
 1. Go to **Entra ID → App registrations → New registration**
 2. Fill in:
-   - **Name**: `DeliveryixApi`
+   - **Name**: `IdentityApi`
    - **Supported account types**: *Accounts in this organizational directory only*
    - No Redirect URI (daemon/backend application — no user login)
 3. Click **Register**
@@ -142,7 +142,7 @@ This app registration is used by the backend API to query Microsoft Graph and re
 1. Go to **API permissions → Add a permission → Microsoft Graph → Application permissions**
 2. Search for and select `User.Read.All`
 3. Click **Add permissions**
-4. Click **Grant admin consent for Deliveryix** → confirm
+4. Click **Grant admin consent for IdentityApi** → confirm
 
 > ⚠️ Must be **Application permission** (not Delegated) — the backend runs without a signed-in user.  
 > Admin consent is required for Application permissions and will not work without it.
@@ -174,4 +174,4 @@ User fills in attributes on the Entra signup page
 |---|---|
 | `DeliveryixWebApp` | Frontend SPA 
 | `DeliveryixValidateIdentityBeforeCreationFunction` | Custom Authentication Extension 
-| `DeliveryixApi` | Backend API
+| `IdentityApi` | IAM API

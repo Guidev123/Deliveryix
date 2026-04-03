@@ -1,9 +1,10 @@
-using Deliveryix.WebApi.Configurations;
+using Deliveryix.Identity.WebApi.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder
-    .AddApiConfiguration();
+    .AddApiConfiguration()
+    .AddIdentity();
 
 var app = builder.Build();
 
