@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /src/Apps/APIs/Deliveryix.WebApi/appsettings.Development.json
 /docker/docker-compose.yml
 /docker/servicebus-config.json
+/src/Apps/APIs/Deliveryix.Identity.WebApi/appsettings.Development.json
