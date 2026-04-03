@@ -13,15 +13,16 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapDelete("api/v1/identity/access-management/roles/{roleName}", async (
-                string roleName,
+            app.MapDelete("api/v1/identity/access-management/roles/{name}", async (
+                string name,
                 ISender sender,
                 CancellationToken cancellationToken) =>
             {
-                var result = await sender.SendAsync(new DeleteRoleCommand(roleName), cancellationToken);
+                var result = await sender.SendAsync(new DeleteRoleCommand(name), cancellationToken);
 
                 return result.Match(Results.NoContent, ApiResults.Problem);
-            }).WithTags(ModuleExtensions.ModuleName);
+            }).WithTags(ModuleExtensions.ModuleName)
+              .WithDescription("Delete a role");
         }
     }
 }

@@ -28,6 +28,13 @@ namespace Modules.Identity.Application.AccessManagement.UseCases.AssignRole
                 return Result.Failure(IdentityErrors.IdentityNotFound(request.IdentityId));
             }
 
+            var availableRoles = await roleRepository.GetDefaultRolesByIdentityTypeAsync(identity.Type, cancellationToken);
+            if (!availableRoles.Any(c =>
+                string.Equals(c.Name, request.RoleName, StringComparison.OrdinalIgnoreCase)))
+            {
+                return Result.Failure(AccessManagementErrors.InvalidRoleForIdentityType(identity.Type));
+            }
+
             await roleRepository.AssignToIdentityAsync(request.RoleName, request.IdentityId, cancellationToken);
 
             identity.AddDomainEvent(RoleAssignedDomainEvent.Create(request.IdentityId, request.RoleName));

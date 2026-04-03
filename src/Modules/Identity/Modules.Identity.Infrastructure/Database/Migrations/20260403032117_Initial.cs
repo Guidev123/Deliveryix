@@ -147,6 +147,25 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "IdentityTypeDefaultRoles",
+                schema: "identity",
+                columns: table => new
+                {
+                    IdentityType = table.Column<string>(type: "VARCHAR(30)", nullable: false),
+                    RoleName = table.Column<string>(type: "VARCHAR(50)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdentityTypeDefaultRoles", x => new { x.IdentityType, x.RoleName });
+                    table.ForeignKey(
+                        name: "FK_IdentityTypeDefaultRoles_Roles_RoleName",
+                        column: x => x.RoleName,
+                        principalSchema: "identity",
+                        principalTable: "Roles",
+                        principalColumn: "Name");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RolePermissions",
                 schema: "identity",
                 columns: table => new
@@ -200,6 +219,12 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
                 column: "RoleName");
 
             migrationBuilder.CreateIndex(
+                name: "IX_IdentityTypeDefaultRoles_RoleName",
+                schema: "identity",
+                table: "IdentityTypeDefaultRoles",
+                column: "RoleName");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RolePermissions_RoleName",
                 schema: "identity",
                 table: "RolePermissions",
@@ -211,6 +236,10 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
         {
             migrationBuilder.DropTable(
                 name: "IdentityRoles",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "IdentityTypeDefaultRoles",
                 schema: "identity");
 
             migrationBuilder.DropTable(

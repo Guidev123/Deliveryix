@@ -18,7 +18,7 @@ namespace Modules.Identity.Application.AccessManagement.UseCases.GrantPermission
             var permissionExists = await roleRepository.PermissionExistsAsync(request.PermissionCode, cancellationToken);
             if (!permissionExists)
             {
-                return Result.Failure(AccessManagementErrors.PermissionNotFound(request.PermissionCode));
+                await roleRepository.AddPermissionAsync(request.PermissionCode, cancellationToken);
             }
 
             await roleRepository.GrantPermissionAsync(request.RoleName, request.PermissionCode, cancellationToken);

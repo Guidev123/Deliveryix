@@ -12,7 +12,7 @@ using Modules.Identity.Infrastructure.Database;
 namespace Modules.Identity.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20260328235229_Initial")]
+    [Migration("20260403032117_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,6 +25,47 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Deliveryix.Commons.Application.Outbox.Models.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("VARCHAR(256)");
+
+                    b.Property<DateTimeOffset>("OccurredOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("ProcessedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages", "identity");
+                });
+
+            modelBuilder.Entity("Deliveryix.Commons.Application.Outbox.Models.OutboxMessageConsumer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("VARCHAR(256)");
+
+                    b.HasKey("Id", "Name");
+
+                    b.ToTable("OutboxMessageConsumers", "identity");
+                });
 
             modelBuilder.Entity("Deliveryix.Commons.Infrastructure.Inbox.Models.InboxMessage", b =>
                 {
@@ -67,47 +108,6 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
                     b.ToTable("InboxMessageConsumers", "identity");
                 });
 
-            modelBuilder.Entity("Deliveryix.Commons.Infrastructure.Outbox.Models.OutboxMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(MAX)");
-
-                    b.Property<string>("Error")
-                        .HasColumnType("VARCHAR(256)");
-
-                    b.Property<DateTimeOffset>("OccurredOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("ProcessedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(200)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OutboxMessages", "identity");
-                });
-
-            modelBuilder.Entity("Deliveryix.Commons.Infrastructure.Outbox.Models.OutboxMessageConsumer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("VARCHAR(256)");
-
-                    b.HasKey("Id", "Name");
-
-                    b.ToTable("OutboxMessageConsumers", "identity");
-                });
-
             modelBuilder.Entity("IdentityRole", b =>
                 {
                     b.Property<Guid>("IdentityId")
@@ -122,6 +122,41 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
                     b.HasIndex("RolesName");
 
                     b.ToTable("IdentityRoles", "identity");
+                });
+
+            modelBuilder.Entity("Modules.Identity.Domain.AcessManagement.Models.IdentityTypeDefaultRole", b =>
+                {
+                    b.Property<string>("IdentityType")
+                        .HasColumnType("VARCHAR(30)");
+
+                    b.Property<string>("RoleName")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.HasKey("IdentityType", "RoleName");
+
+                    b.HasIndex("RoleName");
+
+                    b.ToTable("IdentityTypeDefaultRoles", "identity");
+                });
+
+            modelBuilder.Entity("Modules.Identity.Domain.AcessManagement.Models.Permission", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("Permissions", "identity");
+                });
+
+            modelBuilder.Entity("Modules.Identity.Domain.AcessManagement.Models.Role", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Roles", "identity");
                 });
 
             modelBuilder.Entity("Modules.Identity.Domain.Identities.Entities.Identity", b =>
@@ -148,26 +183,6 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
                     b.ToTable("Identities", "identity");
                 });
 
-            modelBuilder.Entity("Modules.Identity.Domain.Identities.Models.Permission", b =>
-                {
-                    b.Property<string>("Code")
-                        .HasColumnType("VARCHAR(100)");
-
-                    b.HasKey("Code");
-
-                    b.ToTable("Permissions", "identity");
-                });
-
-            modelBuilder.Entity("Modules.Identity.Domain.Identities.Models.Role", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.HasKey("Name");
-
-                    b.ToTable("Roles", "identity");
-                });
-
             modelBuilder.Entity("PermissionRole", b =>
                 {
                     b.Property<string>("PermissionCode")
@@ -191,10 +206,19 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Modules.Identity.Domain.Identities.Models.Role", null)
+                    b.HasOne("Modules.Identity.Domain.AcessManagement.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RolesName")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Modules.Identity.Domain.AcessManagement.Models.IdentityTypeDefaultRole", b =>
+                {
+                    b.HasOne("Modules.Identity.Domain.AcessManagement.Models.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleName")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
                 });
 
@@ -303,13 +327,13 @@ namespace Modules.Identity.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("PermissionRole", b =>
                 {
-                    b.HasOne("Modules.Identity.Domain.Identities.Models.Permission", null)
+                    b.HasOne("Modules.Identity.Domain.AcessManagement.Models.Permission", null)
                         .WithMany()
                         .HasForeignKey("PermissionCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Modules.Identity.Domain.Identities.Models.Role", null)
+                    b.HasOne("Modules.Identity.Domain.AcessManagement.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleName")
                         .OnDelete(DeleteBehavior.Cascade)

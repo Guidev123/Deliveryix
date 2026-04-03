@@ -16,7 +16,7 @@ namespace Modules.Identity.Application.AccessManagement.UseCases.GrantPermission
                 .NotEmpty()
                     .WithErrorCode(AccessManagementErrors.InvalidPermissionCode.Code)
                     .WithMessage(AccessManagementErrors.InvalidPermissionCode.Description)
-                .Matches(@"^[^:]+:[^:]+:[^:]+$")
+                .Matches(@"^[^:]+:[^:]+(:[^:]+)?$")
                     .WithErrorCode(AccessManagementErrors.InvalidPermissionCode.Code)
                     .WithMessage(AccessManagementErrors.InvalidPermissionCode.Description);
         }

@@ -23,7 +23,8 @@ namespace Modules.Identity.Endpoints.AccessManagement
                 var result = await sender.SendAsync(new RevokePermissionCommand(name, permissionCode), cancellationToken);
 
                 return result.Match(Results.NoContent, ApiResults.Problem);
-            }).WithTags(ModuleExtensions.ModuleName);
+            }).WithTags(ModuleExtensions.ModuleName)
+              .WithDescription("Remove a permission from a role");
         }
     }
 }

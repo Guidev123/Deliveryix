@@ -23,7 +23,8 @@ namespace Modules.Identity.Endpoints.AccessManagement
                 return result.Match(
                     role => Results.Ok(role),
                     ApiResults.Problem);
-            }).WithTags(ModuleExtensions.ModuleName);
+            }).WithTags(ModuleExtensions.ModuleName)
+              .WithDescription("Obtain a specific role and its permissions");
         }
     }
 }

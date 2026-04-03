@@ -23,7 +23,8 @@ namespace Modules.Identity.Endpoints.AccessManagement
                 return result.Match(
                     () => Results.Created($"api/v1/identity/access-management/roles/{request.Name}", request.Name),
                     ApiResults.Problem);
-            }).WithTags(ModuleExtensions.ModuleName);
+            }).WithTags(ModuleExtensions.ModuleName)
+              .WithDescription("Create a role");
         }
     }
 }

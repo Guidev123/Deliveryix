@@ -1,4 +1,5 @@
 ﻿using Deliveryix.Commons.Domain.Results;
+using Modules.Identity.Domain.Identities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,5 +29,9 @@ namespace Modules.Identity.Domain.AcessManagement.Errors
         public static readonly Error InvalidIdentityId = Error.Problem(
             "AccessManagement.InvalidIdentityId",
             "Identity identifier must not be empty");
+
+        public static Error InvalidRoleForIdentityType(IdentityType identityType) => Error.Problem(
+            "AccessManagement.InvalidRoleForIdentityType",
+            $"Invalid role for identity type {identityType}");
     }
 }

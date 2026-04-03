@@ -1,7 +1,7 @@
 ﻿using Deliveryix.Commons.WebApi;
-using Microsoft.Graph.Models;
 using Modules.Identity.Infrastructure;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Deliveryix.WebApi.Configurations
 {
@@ -15,6 +15,7 @@ namespace Deliveryix.WebApi.Configurations
 
             builder.Services.ConfigureHttpJsonOptions(options =>
             {
+                options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
 

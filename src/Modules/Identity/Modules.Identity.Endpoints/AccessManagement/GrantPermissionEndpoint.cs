@@ -23,7 +23,8 @@ namespace Modules.Identity.Endpoints.AccessManagement
                 var result = await sender.SendAsync(new GrantPermissionCommand(name, permissionCode), cancellationToken);
 
                 return result.Match(Results.Created, ApiResults.Problem);
-            }).WithTags(ModuleExtensions.ModuleName);
+            }).WithTags(ModuleExtensions.ModuleName)
+              .WithDescription("Adds a permission for a role");
         }
     }
 }

@@ -21,7 +21,8 @@ namespace Modules.Identity.Endpoints.AccessManagement
                 var result = await sender.SendAsync(request, cancellationToken);
 
                 return result.Match(() => Results.Created(), ApiResults.Problem);
-            }).WithTags(ModuleExtensions.ModuleName);
+            }).WithTags(ModuleExtensions.ModuleName)
+              .WithDescription("Assign a role to an identity");
         }
     }
 }

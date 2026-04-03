@@ -4,6 +4,7 @@ using Deliveryix.Commons.Domain.Results;
 using Modules.Identity.Application.AccessManagement.Repositories;
 using Modules.Identity.Application.AccessManagement.UseCases.GetRole;
 using Modules.Identity.Domain.AcessManagement.Models;
+using Modules.Identity.Domain.Identities.Enums;
 using Modules.Identity.Domain.Identities.Extensions;
 
 namespace Modules.Identity.Infrastructure.Database.Repositories
@@ -214,6 +215,41 @@ namespace Modules.Identity.Infrastructure.Database.Repositories
                 new { Code = code },
                 unitOfWork.Transaction
             ).WaitAsync(cancellationToken);
+        }
+
+        public Task AddDefaultRoleForIdentityTypeAsync(string roleName, IdentityType identityType, CancellationToken cancellationToken = default)
+        {
+            var sql = $"""
+                IF NOT EXISTS (
+                    SELECT 1 FROM [{Schema}].IdentityTypeDefaultRoles
+                    WHERE RoleName = @RoleName AND IdentityType = @IdentityType
+                )
+                INSERT INTO [{Schema}].IdentityTypeDefaultRoles (RoleName, IdentityType)
+                VALUES (@RoleName, @IdentityType)
+            """;
+
+            return unitOfWork.Connection.ExecuteAsync(
+                sql,
+                new { RoleName = roleName, IdentityType = identityType },
+                unitOfWork.Transaction
+            ).WaitAsync(cancellationToken);
+        }
+
+        public async Task<IReadOnlyCollection<Role>> GetDefaultRolesByIdentityTypeAsync(IdentityType identityType, CancellationToken cancellationToken = default)
+        {
+            var sql = $"""
+                SELECT r.Name
+                FROM [{Schema}].IdentityTypeDefaultRoles idr
+                INNER JOIN [{Schema}].Roles r ON r.Name = idr.RoleName
+                WHERE idr.IdentityType = @IdentityType
+            """;
+
+            var roles = await unitOfWork.Connection.QueryAsync<Role>(
+                sql,
+                new { IdentityType = identityType.ToString() },
+                unitOfWork.Transaction).WaitAsync(cancellationToken);
+
+            return roles.ToList().AsReadOnly();
         }
     }
 }
