@@ -1,4 +1,5 @@
 using Dapper;
+using Deliveryix.Commons.Application.Abstractions;
 using Deliveryix.Commons.Application.Extensions;
 using Deliveryix.Commons.Application.Outbox.Repositories;
 using Deliveryix.Commons.Infrastructure.Factories;
@@ -17,15 +18,16 @@ public class ValidateIdentityBeforeCreationFunction
     private readonly ILogger<ValidateIdentityBeforeCreationFunction> _logger;
     private readonly SqlConnectionFactory _sqlConnectionFactory;
     private readonly IOutboxRepository _outboxRepository;
+    private readonly IModuleInfo _moduleInfo;
     private readonly string _extensionAppId;
-    private const string Schema = "identity";
 
-    public ValidateIdentityBeforeCreationFunction(ILogger<ValidateIdentityBeforeCreationFunction> logger, SqlConnectionFactory sqlConnectionFactory, IConfiguration configuration, IOutboxRepository outboxRepository)
+    public ValidateIdentityBeforeCreationFunction(ILogger<ValidateIdentityBeforeCreationFunction> logger, SqlConnectionFactory sqlConnectionFactory, IConfiguration configuration, IOutboxRepository outboxRepository, IModuleInfo moduleInfo)
     {
         _logger = logger;
         _sqlConnectionFactory = sqlConnectionFactory;
         _extensionAppId = configuration["Entra:ExtensionsAppId"]!;
         _outboxRepository = outboxRepository;
+        _moduleInfo = moduleInfo;
     }
 
     [Function("ValidateIdentityBeforeCreation")]
@@ -73,7 +75,7 @@ public class ValidateIdentityBeforeCreationFunction
 
             var domainEvent = IdentityRegisteredInProviderDomainEvent.Create(Guid.Empty, email, documentNumber, phoneNumber);
 
-            await _outboxRepository.InsertAsync(Schema, domainEvent, cancellationToken);
+            await _outboxRepository.InsertAsync(_moduleInfo.Name, domainEvent, cancellationToken);
 
             return Extensions.ResponseExtensions.Continue();
         }
@@ -91,13 +93,13 @@ public class ValidateIdentityBeforeCreationFunction
     {
         using var connection = _sqlConnectionFactory.Create();
 
-        const string sql = """"
+        var sql = $""""
             SELECT
                 CAST(
                     CASE
                         WHEN EXISTS(
                             SELECT 1
-                            FROM [identity].Identities
+                            FROM [{_moduleInfo.Name}].Identities
                             WHERE Document = @Document
                                OR Email = @Email
                         )
