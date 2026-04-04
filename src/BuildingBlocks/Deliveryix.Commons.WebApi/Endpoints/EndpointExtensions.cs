@@ -34,8 +34,7 @@ namespace Deliveryix.Commons.WebApi.Endpoints
 
             var group = builder
                 .MapGroup(string.Empty)
-                .AddEndpointFilter<AuthorizationHeadersFilter>()
-                .WithMetadata((object)new RequireAuthorizationHeadersAttribute());
+                .AddEndpointFilter<AuthorizationHeadersFilter>();
 
             foreach (var endpoint in endpoints)
             {
@@ -43,6 +42,13 @@ namespace Deliveryix.Commons.WebApi.Endpoints
             }
 
             return app;
+        }
+
+        public static RouteHandlerBuilder WithoutAuthorizationHeaders(this RouteHandlerBuilder builder)
+        {
+            builder.WithMetadata(new SkipAuthorizationHeadersAttribute());
+
+            return builder;
         }
     }
 }

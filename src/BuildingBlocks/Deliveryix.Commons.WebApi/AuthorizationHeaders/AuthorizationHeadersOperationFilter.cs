@@ -14,7 +14,7 @@ namespace Deliveryix.Commons.WebApi.AuthorizationHeaders
             if (hasSkip)
                 return;
 
-            operation.Parameters ??= [];
+            operation.Parameters ??= new List<IOpenApiParameter>();
 
             foreach (var header in new[] { "X-Identity-Id", "X-Roles", "X-Permissions" })
             {
