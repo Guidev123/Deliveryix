@@ -1,5 +1,8 @@
 ﻿using Deliveryix.Commons.Domain.Results;
+using Deliveryix.Commons.Infrastructure.Authentication;
 using Deliveryix.Commons.WebApi;
+using Deliveryix.Commons.WebApi.AuthorizationHeaders;
+using Deliveryix.Commons.WebApi.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -10,6 +13,7 @@ using System.Security.Claims;
 
 namespace Modules.Identity.Endpoints.AccessManagement
 {
+    [SkipAuthorizationHeaders]
     internal sealed class GetPermissionsEndpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
@@ -20,6 +24,7 @@ namespace Modules.Identity.Endpoints.AccessManagement
 
                 return result.Match(() => Results.Ok(result.Value), ApiResults.Problem);
             }).WithTags(ModuleExtensions.ModuleName)
+              .WithMetadata(new SkipAuthorizationHeadersAttribute())
               .WithDescription("Get permissions of authenticated idenity");
         }
     }

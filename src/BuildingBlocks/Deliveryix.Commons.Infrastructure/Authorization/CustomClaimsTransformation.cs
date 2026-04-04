@@ -18,10 +18,6 @@ namespace Deliveryix.Commons.Infrastructure.Authorization
 
             var claimsIdentity = new ClaimsIdentity();
 
-            var oid = principal.Claims.FirstOrDefault(c => c.Type == CustomClaims.OID)?.Value;
-            if (oid is not null)
-                claimsIdentity.AddClaim(new(CustomClaims.OID, oid));
-
             if (http.Request.Headers.TryGetValue("X-Identity-Id", out var identityId))
                 claimsIdentity.AddClaim(new(CustomClaims.SUB, identityId.ToString()));
 

@@ -2,7 +2,7 @@
 using Deliveryix.Commons.Application.Abstractions;
 using Deliveryix.Commons.Application.Behaviors;
 using Deliveryix.Commons.Infrastructure;
-using Deliveryix.Commons.WebApi;
+using Deliveryix.Commons.WebApi.Endpoints;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

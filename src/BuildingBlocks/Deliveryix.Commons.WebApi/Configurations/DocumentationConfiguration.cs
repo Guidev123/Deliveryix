@@ -1,6 +1,9 @@
-﻿using Microsoft.OpenApi;
+﻿using Deliveryix.Commons.WebApi.AuthorizationHeaders;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi;
 
-namespace Deliveryix.Identity.WebApi.Configurations
+namespace Deliveryix.Commons.WebApi.Configurations
 {
     public static class DocumentationConfiguration
     {
@@ -8,9 +11,10 @@ namespace Deliveryix.Identity.WebApi.Configurations
         {
             services.AddSwaggerGen(c =>
             {
+                c.OperationFilter<AuthorizationHeadersOperationFilter>();
+
                 c.SwaggerDoc("v1", new OpenApiInfo()
                 {
-                    Title = "Sua API",
                     Version = "v1"
                 });
 

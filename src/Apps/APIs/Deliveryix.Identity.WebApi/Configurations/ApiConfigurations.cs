@@ -1,5 +1,6 @@
 ﻿using Deliveryix.Commons.Infrastructure.Authentication;
-using Deliveryix.Commons.WebApi;
+using Deliveryix.Commons.WebApi.Configurations;
+using Deliveryix.Commons.WebApi.Endpoints;
 using Modules.Identity.Infrastructure;
 using System.Text.Json;
 using System.Text.Json.Serialization;

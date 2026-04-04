@@ -13,5 +13,21 @@ namespace Deliveryix.Commons.Infrastructure.Authentication
 
             return permissionClaims.Select(c => c.Value).ToHashSet();
         }
+
+        public static Guid GetEntraId(this ClaimsPrincipal claimsPrincipal)
+        {
+            var oid = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == CustomClaims.OID)?.Value
+                ?? throw new InvalidOperationException("Claim 'oid' not found on ClaimsPrincipal.");
+
+            return Guid.Parse(oid);
+        }
+
+        public static Guid GetIdentityId(this ClaimsPrincipal claimsPrincipal)
+        {
+            var identityId = claimsPrincipal.FindFirstValue(CustomClaims.SUB)
+                ?? throw new DeliveryixException("Claim 'sub' (IdentityId) not found on ClaimsPrincipal.");
+
+            return Guid.Parse(identityId);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Deliveryix.Commons.Domain.Results;
 using Deliveryix.Commons.WebApi;
+using Deliveryix.Commons.WebApi.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Deliveryix.Commons.WebApi.AuthorizationHeaders;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
 
-namespace Deliveryix.Commons.WebApi
+namespace Deliveryix.Commons.WebApi.Endpoints
 {
     public static class EndpointExtensions
     {
@@ -26,13 +28,18 @@ namespace Deliveryix.Commons.WebApi
             this WebApplication app,
             RouteGroupBuilder? routeGroupBuilder = null)
         {
-            IEnumerable<IEndpoint> endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
+            var endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
 
-            IEndpointRouteBuilder builder = routeGroupBuilder is null ? app : routeGroupBuilder;
+            IEndpointRouteBuilder builder = routeGroupBuilder is not null ? routeGroupBuilder : app;
 
-            foreach (IEndpoint endpoint in endpoints)
+            var group = builder
+                .MapGroup(string.Empty)
+                .AddEndpointFilter<AuthorizationHeadersFilter>()
+                .WithMetadata((object)new RequireAuthorizationHeadersAttribute());
+
+            foreach (var endpoint in endpoints)
             {
-                endpoint.MapEndpoint(builder);
+                endpoint.MapEndpoint(group);
             }
 
             return app;

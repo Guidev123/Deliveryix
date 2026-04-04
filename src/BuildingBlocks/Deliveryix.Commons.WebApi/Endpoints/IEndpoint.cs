@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Deliveryix.Commons.WebApi
+namespace Deliveryix.Commons.WebApi.Endpoints
 {
     public interface IEndpoint
     {
