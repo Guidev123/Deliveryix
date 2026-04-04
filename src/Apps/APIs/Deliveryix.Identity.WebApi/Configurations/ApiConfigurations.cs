@@ -1,4 +1,5 @@
-﻿using Deliveryix.Commons.WebApi;
+﻿using Deliveryix.Commons.Infrastructure.Authentication;
+using Deliveryix.Commons.WebApi;
 using Modules.Identity.Infrastructure;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -24,6 +25,13 @@ namespace Deliveryix.Identity.WebApi.Configurations
             return builder;
         }
 
+        public static WebApplicationBuilder AddSecurity(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddAuthWithAzureEntraId(builder.Configuration);
+
+            return builder;
+        }
+
         public static WebApplicationBuilder AddIdentity(this WebApplicationBuilder builder)
         {
             builder.Services.AddIdentityFullInfrastructure(builder.Configuration);
@@ -37,9 +45,12 @@ namespace Deliveryix.Identity.WebApi.Configurations
 
             app.MapOpenApi();
 
-            app.MapEndpoints();
-
             app.UseSwaggerConfig();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.MapEndpoints();
 
             return app;
         }

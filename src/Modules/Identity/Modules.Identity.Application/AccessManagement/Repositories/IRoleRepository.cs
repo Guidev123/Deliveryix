@@ -1,4 +1,5 @@
 ﻿using Deliveryix.Commons.Domain.Results;
+using Modules.Identity.Application.AccessManagement.UseCases.GetPermissions;
 using Modules.Identity.Application.AccessManagement.UseCases.GetRole;
 using Modules.Identity.Domain.AcessManagement.Models;
 using Modules.Identity.Domain.Identities.Enums;
@@ -34,5 +35,7 @@ namespace Modules.Identity.Application.AccessManagement.Repositories
         Task AddDefaultRoleForIdentityTypeAsync(string roleName, IdentityType identityType, CancellationToken cancellationToken = default);
 
         Task<IReadOnlyCollection<Role>> GetDefaultRolesByIdentityTypeAsync(IdentityType identityType, CancellationToken cancellationToken = default);
+
+        Task<GetIdentityPermissionsResponse?> GetIdentityPermissionsAsync(Guid identityProviderId, CancellationToken cancellationToken = default);
     }
 }

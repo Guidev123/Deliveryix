@@ -36,7 +36,6 @@ namespace Modules.Identity.Infrastructure
         {
             return services
                     .AddEventCollector()
-                    .AddCommonsConfigurations()
                     .AddIdentityEndpoints()
                     .AddIdentityCore()
                     .AddOutbox(configuration)

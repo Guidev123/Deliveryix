@@ -7,6 +7,8 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.3.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="10.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
@@ -16,6 +18,7 @@
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="4.7.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Deliveryix.Commons.Application\Deliveryix.Commons.Application.csproj" />

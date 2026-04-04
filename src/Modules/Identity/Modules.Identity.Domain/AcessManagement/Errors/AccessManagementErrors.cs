@@ -33,5 +33,9 @@ namespace Modules.Identity.Domain.AcessManagement.Errors
         public static Error InvalidRoleForIdentityType(IdentityType identityType) => Error.Problem(
             "AccessManagement.InvalidRoleForIdentityType",
             $"Invalid role for identity type {identityType}");
+
+        public static Error PermissionsNotFoundForIdentity(Guid identityId) => Error.NotFound(
+            "AccessManagement.PermissionsNotFoundForIdentity",
+            $"No permissions found for identity with ID '{identityId}'");
     }
 }

@@ -2,6 +2,7 @@
 using Deliveryix.Commons.Application.Abstractions;
 using Deliveryix.Commons.Domain.Results;
 using Modules.Identity.Application.AccessManagement.Repositories;
+using Modules.Identity.Application.AccessManagement.UseCases.GetPermissions;
 using Modules.Identity.Application.AccessManagement.UseCases.GetRole;
 using Modules.Identity.Domain.AcessManagement.Models;
 using Modules.Identity.Domain.Identities.Enums;
@@ -16,6 +17,10 @@ namespace Modules.Identity.Infrastructure.Database.Repositories
         public Task AddAsync(Role role, CancellationToken cancellationToken = default)
         {
             var sql = $"""
+                IF NOT EXISTS (
+                    SELECT 1 FROM [{Schema}].Roles
+                    WHERE Name = @Name
+                )
                 INSERT INTO [{Schema}].Roles (Name)
                 VALUES (@Name)
             """;
@@ -246,10 +251,40 @@ namespace Modules.Identity.Infrastructure.Database.Repositories
 
             var roles = await unitOfWork.Connection.QueryAsync<Role>(
                 sql,
-                new { IdentityType = identityType.ToString() },
+                new { IdentityType = identityType },
                 unitOfWork.Transaction).WaitAsync(cancellationToken);
 
             return roles.ToList().AsReadOnly();
+        }
+
+        public async Task<GetIdentityPermissionsResponse?> GetIdentityPermissionsAsync(Guid identityProviderId, CancellationToken cancellationToken = default)
+        {
+            var sql = $"""
+                SELECT DISTINCT
+                    i.Id,
+                    ir.RoleName,
+                    rp.PermissionCode
+                FROM [{Schema}].Identities i
+                JOIN [{Schema}].IdentityRoles ir ON ir.IdentityId = i.Id
+                JOIN [{Schema}].RolePermissions rp ON rp.RoleName = ir.RoleName
+                WHERE i.IdentityProviderId = @IdentityProviderId
+            """;
+
+            var result = await unitOfWork.Connection.QueryAsync<IdentityPermission>(sql, new
+            {
+                IdentityProviderId = identityProviderId
+            }).WaitAsync(cancellationToken);
+
+            var resultList = result.AsList();
+
+            if (resultList.Count == 0) return null;
+
+            var roles = resultList
+                .GroupBy(x => x.RoleName)
+                .Select(g => new RolePermissions(g.Key, g.Select(x => x.PermissionCode).ToHashSet()))
+                .ToList();
+
+            return new(resultList[0].Id, roles);
         }
     }
 }

@@ -122,7 +122,7 @@ This app registration is used by the backend API to query Microsoft Graph and re
 
 1. Go to **Entra ID → App registrations → New registration**
 2. Fill in:
-   - **Name**: `IdentityApi`
+   - **Name**: `DeliveryixIdentityApi`
    - **Supported account types**: *Accounts in this organizational directory only*
    - No Redirect URI (daemon/backend application — no user login)
 3. Click **Register**
@@ -174,4 +174,4 @@ User fills in attributes on the Entra signup page
 |---|---|
 | `DeliveryixWebApp` | Frontend SPA 
 | `DeliveryixValidateIdentityBeforeCreationFunction` | Custom Authentication Extension 
-| `IdentityApi` | IAM API
+| `DeliveryixIdentityApi` | IAM API

@@ -5,20 +5,18 @@ namespace Deliveryix.Commons.WebApi
 {
     public static class ClaimsPrincipalExtensions
     {
-        private const string SUB = "sub";
-        private const string PERMISSIONS = "permissions";
-
-        public static Guid GetIdentityId(this ClaimsPrincipal claimsPrincipal)
+        public static Guid GetEntraId(this ClaimsPrincipal claimsPrincipal)
         {
-            var userId = claimsPrincipal?.FindFirst(SUB)?.Value;
-            return Guid.TryParse(userId, out var parsedUserId)
-                ? parsedUserId
-                : throw new DeliveryixException("Identity identifier is unavaible");
+            var oid = claimsPrincipal.FindFirstValue("oid")
+                ?? claimsPrincipal.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier")
+                ?? throw new InvalidOperationException("Claim 'oid' not found on ClaimsPrincipal.");
+
+            return Guid.Parse(oid);
         }
 
         public static HashSet<string> GetPermissions(this ClaimsPrincipal claimsPrincipal)
         {
-            var permissionClaims = claimsPrincipal?.FindAll(PERMISSIONS)
+            var permissionClaims = claimsPrincipal?.FindAll("permissions")
                 ?? throw new DeliveryixException("Permissions are unavaible");
 
             return permissionClaims.Select(c => c.Value).ToHashSet();

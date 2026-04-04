@@ -21,6 +21,7 @@ namespace Deliveryix.Commons.Infrastructure
         public static IServiceCollection AddCommonsConfigurations(this IServiceCollection services)
         {
             services.AddSingleton(TimeProvider.System);
+            services.AddHttpContextAccessor();
 
             return services;
         }

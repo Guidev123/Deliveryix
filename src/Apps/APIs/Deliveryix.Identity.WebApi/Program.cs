@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder
     .AddApiConfiguration()
+    .AddSecurity()
     .AddIdentity();
 
 var app = builder.Build();
