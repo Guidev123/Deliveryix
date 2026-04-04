@@ -25,7 +25,6 @@ namespace Deliveryix.Commons.WebApi.Configurations
                     Scheme = "bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Format: Bearer {token}"
                 });
 
                 var securityScheme = new OpenApiSecurityScheme
