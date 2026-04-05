@@ -14,7 +14,7 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapGet("api/v1/identity/access-management/roles/{name}", async (
+            app.MapGet("api/v1/roles/{name}", async (
                 string name,
                 ISender sender,
                 CancellationToken cancellationToken) =>

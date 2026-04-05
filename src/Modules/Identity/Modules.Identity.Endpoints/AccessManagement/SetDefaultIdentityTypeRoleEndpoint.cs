@@ -15,7 +15,7 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("api/v1/identity/access-management/roles/{name}/identity-type/defaut", async (
+            app.MapPost("api/v1/roles/{name}/default-identity-type", async (
                 string name,
                 IdentityType identityType,
                 ISender sender,

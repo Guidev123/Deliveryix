@@ -8,6 +8,7 @@ builder.Services.AddHostedService<Worker>();
 builder.Services
     .AddIdentityCore()
     .AddIdentityPersistence(builder.Configuration)
+    .AddIdentityCache(builder.Configuration)
     .AddOutbox(builder.Configuration)
     .AddServiceBus(builder.Configuration)
     .AddIdentityGraphClient(builder.Configuration);

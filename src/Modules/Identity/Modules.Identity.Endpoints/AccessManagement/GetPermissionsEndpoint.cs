@@ -16,7 +16,7 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapGet("api/v1/identity/profile", async (ClaimsPrincipal claimsPrincipal, ISender sender, CancellationToken cancellationToken) =>
+            app.MapGet("api/v1/identities/me", async (ClaimsPrincipal claimsPrincipal, ISender sender, CancellationToken cancellationToken) =>
             {
                 var result = await sender.SendAsync(new GetIdentityPermissionsQuery(claimsPrincipal.GetEntraId()), cancellationToken);
 

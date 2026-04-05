@@ -15,12 +15,13 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapDelete("api/v1/identity/access-management/roles/identities", async (
-               [FromBody] UnassignRoleCommand request,
+            app.MapDelete("api/v1/roles/{name}/identities/{identityId}", async (
+                string name,
+                Guid identityId,
                 ISender sender,
                 CancellationToken cancellationToken) =>
             {
-                var result = await sender.SendAsync(request, cancellationToken);
+                var result = await sender.SendAsync(new UnassignRoleCommand(identityId, name), cancellationToken);
 
                 return result.Match(Results.NoContent, ApiResults.Problem);
             }).WithTags(ModuleExtensions.ModuleName)

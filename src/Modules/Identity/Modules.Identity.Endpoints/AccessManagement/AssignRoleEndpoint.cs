@@ -14,12 +14,13 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("api/v1/identity/access-management/roles/identities", async (
-                AssignRoleCommand request,
+            app.MapPost("/api/v1/roles/{name}/identities/{identityId:guid}", async (
+                string name,
+                Guid identityId,
                 ISender sender,
                 CancellationToken cancellationToken) =>
             {
-                var result = await sender.SendAsync(request, cancellationToken);
+                var result = await sender.SendAsync(new AssignRoleCommand(identityId, name), cancellationToken);
 
                 return result.Match(() => Results.Created(), ApiResults.Problem);
             }).WithTags(ModuleExtensions.ModuleName)

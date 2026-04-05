@@ -3,7 +3,6 @@ using Deliveryix.Commons.WebApi;
 using Deliveryix.Commons.WebApi.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using MidR.Interfaces;
 using Modules.Identity.Application.AccessManagement.UseCases.RevokePermission;
@@ -15,9 +14,9 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapDelete("api/v1/identity/access-management/roles/{name}/permissions", async (
-                string name,
-               [FromBody] string permissionCode,
+            app.MapDelete("api/v1/roles/{name}/permissions/{permissionCode}", async (
+               string name,
+               string permissionCode,
                ISender sender,
                 CancellationToken cancellationToken) =>
             {

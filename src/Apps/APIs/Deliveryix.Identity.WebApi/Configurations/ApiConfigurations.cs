@@ -1,4 +1,5 @@
-﻿using Deliveryix.Commons.Infrastructure.Authentication;
+﻿using Deliveryix.Commons.Infrastructure;
+using Deliveryix.Commons.Infrastructure.Authentication;
 using Deliveryix.Commons.WebApi.Configurations;
 using Deliveryix.Commons.WebApi.Endpoints;
 using Modules.Identity.Infrastructure;
@@ -35,7 +36,9 @@ namespace Deliveryix.Identity.WebApi.Configurations
 
         public static WebApplicationBuilder AddIdentity(this WebApplicationBuilder builder)
         {
-            builder.Services.AddIdentityFullInfrastructure(builder.Configuration);
+            builder.Services
+                .AddIdentityFullInfrastructure(builder.Configuration)
+                .AddIdentityCache(builder.Configuration);
 
             return builder;
         }

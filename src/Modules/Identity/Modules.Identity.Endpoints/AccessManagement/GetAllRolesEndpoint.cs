@@ -15,7 +15,7 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapGet("api/v1/identity/access-management/roles", async (
+            app.MapGet("api/v1/roles", async (
               [FromQuery] int pageNumber,
               [FromQuery] int pageSize,
                 ISender sender,

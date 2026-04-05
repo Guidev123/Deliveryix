@@ -14,7 +14,7 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("api/v1/identity/access-management/roles/permissions", async (
+            app.MapPost("api/v1/roles/permissions", async (
                 CreatePermissionCommand request,
                 ISender sender,
                 CancellationToken cancellationToken) =>

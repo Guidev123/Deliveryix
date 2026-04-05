@@ -14,7 +14,7 @@ namespace Modules.Identity.Endpoints.AccessManagement
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapPost("api/v1/identity/access-management/roles", async (
+            app.MapPost("api/v1/roles", async (
                 CreateRoleCommand request,
                 ISender sender,
                 CancellationToken cancellationToken) =>
@@ -22,7 +22,7 @@ namespace Modules.Identity.Endpoints.AccessManagement
                 var result = await sender.SendAsync(request, cancellationToken);
 
                 return result.Match(
-                    () => Results.Created($"api/v1/identity/access-management/roles/{request.Name}", request.Name),
+                    () => Results.Created($"api/v1/roles/{request.Name}", request.Name),
                     ApiResults.Problem);
             }).WithTags(ModuleExtensions.ModuleName)
               .WithDescription("Create a role");

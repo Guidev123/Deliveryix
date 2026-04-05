@@ -38,7 +38,7 @@ A PowerShell script that automates the full OAuth 2.0 Authorization Code + PKCE 
 | `ApiScope` | The API scope to request (e.g. `api://deliveryix-iam/access_as_user`) |
 | `RedirectPort` | The local port for the OAuth callback listener (e.g. `3000`) |
 | `IamApiBase` | Base URL of the local IAM API (e.g. `https://localhost:7020`) |
-| `IamProfileRoute` | Route of the identity profile endpoint (e.g. `/api/v1/identity/profile`) |
+| `IamProfileRoute` | Route of the identity profile endpoint (e.g. `/api/v1/identities/me`) |
 
 All parameters are **mandatory**. The script will error immediately if any are missing.
 
@@ -54,7 +54,7 @@ powershell -ExecutionPolicy Bypass -File .\deliveryix-jwt-frontend-generator.ps1
   -ApiScope        "api://deliveryix-iam/access_as_user" `
   -RedirectPort    "3000" `
   -IamApiBase      "https://localhost:7020" `
-  -IamProfileRoute "/api/v1/identity/profile"
+  -IamProfileRoute "/api/v1/identities/me"
 ```
 
 After authenticating in the browser, the terminal will display:
