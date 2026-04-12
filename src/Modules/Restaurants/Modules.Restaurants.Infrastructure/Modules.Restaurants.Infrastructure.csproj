@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Deliveryix.Commons.Infrastructure\Deliveryix.Commons.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules.Restaurants.Application\Modules.Restaurants.Application.csproj" />
+    <ProjectReference Include="..\Modules.Restaurants.Endpoints\Modules.Restaurants.Endpoints.csproj" />
+  </ItemGroup>
+
+</Project>

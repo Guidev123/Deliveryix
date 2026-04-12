@@ -25,4 +25,15 @@
     <Project Path="src/Modules/Identity/Modules.Identity.Infrastructure/Modules.Identity.Infrastructure.csproj" Id="39e60d74-299d-448d-861d-7869fd99463d" />
     <Project Path="src/Modules/Identity/Modules.Identity.IntegrationEvents/Modules.Identity.IntegrationEvents.csproj" Id="05ff2281-a2f0-4120-9cee-a59403ffc97d" />
   </Folder>
+  <Folder Name="/src/Modules/Notifications/">
+    <Project Path="src/Modules/Notifications/Modules.Notifications.Endpoints/Modules.Notifications.Endpoints.csproj" Id="a3a2006b-9985-48fc-b380-8079c1d5b160" />
+    <Project Path="src/Modules/Notifications/Modules.Notifications.Infrastructure/Modules.Notifications.Infrastructure.csproj" Id="389f7581-8657-4748-9c80-81297431a87b" />
+  </Folder>
+  <Folder Name="/src/Modules/Restaurants/">
+    <Project Path="src/Modules/Restaurants/Modules.Restaurants.Application/Modules.Restaurants.Application.csproj" Id="bfaad033-2399-47ff-9949-46049fcb4f7a" />
+    <Project Path="src/Modules/Restaurants/Modules.Restaurants.Domain/Modules.Restaurants.Domain.csproj" Id="f41f39bd-2f02-4577-905a-231ea0803c37" />
+    <Project Path="src/Modules/Restaurants/Modules.Restaurants.Endpoints/Modules.Restaurants.Endpoints.csproj" Id="aa0c9f4d-be99-466a-a707-4dd4524faed0" />
+    <Project Path="src/Modules/Restaurants/Modules.Restaurants.Infrastructure/Modules.Restaurants.Infrastructure.csproj" Id="73f578e7-af69-4b25-8a6a-3ac332e08aaf" />
+    <Project Path="src/Modules/Restaurants/Modules.Restaurants.IntegrationEvents/Modules.Restaurants.IntegrationEvents.csproj" Id="09e4741b-f580-45a5-9849-4bf19ccfdf0d" />
+  </Folder>
 </Solution>

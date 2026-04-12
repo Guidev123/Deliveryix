@@ -116,5 +116,15 @@ namespace Deliveryix.Commons.Infrastructure
 
             return services;
         }
+
+        public static IServiceCollection AddOutbox<TOutboxRepository>(this IServiceCollection services, IConfiguration configuration)
+            where TOutboxRepository : class, IOutboxRepository
+        {
+            services.Configure<OutboxOptions>(configuration.GetSection(OutboxOptions.SectionName));
+
+            services.AddScoped<IOutboxRepository, TOutboxRepository>();
+
+            return services;
+        }
     }
 }
